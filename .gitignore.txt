@@ -1,1 +1,1 @@
-/postmanCollection/nodeApi.postman_collection.json
+postmanCollection/
