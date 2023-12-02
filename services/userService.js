@@ -1,13 +1,4 @@
-const bcrypt      = require('bcrypt');
 const validator   = require('validator');
-
-async function hashPassword(password) {
-  return bcrypt.hash(password, 10);
-}
-
-async function comparePasswords(providedPassword, storedHashedPassword) {
-  return bcrypt.compare(providedPassword, storedHashedPassword);
-}
 
 
 async function isValidEmail(email) {
