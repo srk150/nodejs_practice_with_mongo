@@ -25,4 +25,4 @@ async function generateOTP() {
   return otpCode.toString();  
 }
 
-module.exports = { hashPassword, comparePasswords, isValidEmail, isValidMobile, isValidPassword, generateOTP  };
+module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP  };
