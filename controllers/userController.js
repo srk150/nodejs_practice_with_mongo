@@ -209,7 +209,7 @@ module.exports = {
       const token = jwt.sign({ userId: user._id }, 'yourSecretKey', { expiresIn: '15m' });
 
       // Send the password reset link via email (for demonstration purposes, log to the console)
-      console.log('Password Reset Link:', `http://localhost:3000/user/reset-password/${token}`);
+      console.log('Password Reset Link:', `${process.env.BASE_URL}/api/user/reset-password/${token}`);
 
       res.status(200).json({ message: 'Password reset link sent successfully' });
     } catch (error) {
@@ -235,11 +235,8 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      // Hash the new password
-      const hashedPassword = await userService.hashPassword(newPassword);
-
       // Update the user's password
-      user.password = hashedPassword;
+      user.password = newPassword;
       await user.save();
 
       res.status(200).json({ message: 'Password reset successfully' });
