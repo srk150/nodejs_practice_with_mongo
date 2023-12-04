@@ -91,7 +91,27 @@ checkOut: async (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
     }
   },
-  
+
+  // all Attendece list 
+  allAttendece: async (req, res) => {
+
+    try {
+
+      const { userId } = req.params;
+
+      // Find the user by ID
+      const attendance = await attendanceModel.findById(userId);
+
+      if (!attendance) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      res.status(200).json(attendance);
+    } catch (error) {
+      console.error('Error fetching all users:', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+    
+  },
 
 };
 //module.exports end
