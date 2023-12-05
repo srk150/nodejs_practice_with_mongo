@@ -2,18 +2,32 @@ const mongoose = require('mongoose');
 
 // Define the user schema
 const taskSchema = new mongoose.Schema({
- 
+
   userId: {
     type: String,
     required: true,
   },
-  inDate: {
+  clientId: {
+    type: String,
+    required: true,
+  },
+  created: {
     type: Date,
     required: true,
   },
+  task: {
+    type: String,
+    required: true,
+  },
 
-  outDate: {
-    type: Date,
+  taskDesc: {
+    type: String,
+    required: true,
+  },
+
+  address: {
+    type: String,
+    required: true,
   },
 
   location: {
@@ -27,10 +41,11 @@ const taskSchema = new mongoose.Schema({
       required: true,
     },
   },
+
   status: {
     type: String,
-    enum: ['IN', 'OUT'], 
-    default: 'IN', 
+    enum: ['Done', 'Not Done'],
+    default: 'Not Done',
   },
 }, { versionKey: false });
 

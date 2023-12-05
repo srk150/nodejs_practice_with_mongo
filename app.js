@@ -37,6 +37,7 @@ process.on('SIGINT', async () => {
 const userRoutes = require('./routes/userRoutes');
 const attendenceRoute = require('./routes/attendenceRoute');
 const taskRoutes = require('./routes/taskRoutes');
+const clientRoutes = require('./routes/clientRoutes');
 
 // Set base URL
 const baseRoute = '/api';
@@ -55,6 +56,7 @@ app.get(baseRoute, (req, res) => {
 app.use(`${baseRoute}/user`, userRoutes);
 app.use(`${baseRoute}/attendance`, attendenceRoute);
 app.use(`${baseRoute}/task`, taskRoutes);
+app.use(`${baseRoute}/client`, clientRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
