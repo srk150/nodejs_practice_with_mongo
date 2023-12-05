@@ -1,4 +1,4 @@
 # matches any files and directories with the name postmanCollection
 
 /postmanCollection/
-.env/
+.env
