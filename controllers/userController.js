@@ -80,7 +80,7 @@ module.exports = {
 
         const result = await User.updateOne({ _id: userId }, update);
 
-        if (result.modifiedCount === 1) {
+        if (result.matchedCount === 1) {
 
           console.log('OTP updated successfully');
 
@@ -127,7 +127,7 @@ module.exports = {
 
       try {
         const result = await User.updateOne(filter, update);
-        console.log(result.modifiedCount === 1 ? 'OTP updated successfully' : 'Error in updating!');
+        console.log(result.matchedCount === 1 ? 'OTP updated successfully' : 'Error in updating!');
       } catch (error) {
         console.error('Error updating OTP:', error);
       }
@@ -158,7 +158,7 @@ module.exports = {
 
         try {
           const result = await User.updateOne(filter, update);
-          console.log(result.modifiedCount === 1 ? 'Status updated successfully' : 'Error in Status updating!');
+          console.log(result.matchedCount === 1 ? 'Status updated successfully' : 'Error in Status updating!');
         } catch (error) {
           console.error('Error updating OTP:', error);
         }

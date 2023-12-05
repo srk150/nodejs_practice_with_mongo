@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 const bodyParser = require('body-parser');
 
@@ -12,46 +12,25 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 
 // MongoDB Connection
-
 const mongoose = require('mongoose');
-const MONGODB_URI = 'mongodb://localhost:27017/nodeApi';
+mongoose.connect(process.env.MONGODB_URI);
 
-
-mongoose.connect(MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useFindAndModify: false, // Set to false to use native findOneAndUpdate() instead of findAndModify()
-  useCreateIndex: true,    // Set to true to use the createIndex() function instead of ensureIndex()
-});
-
-
-
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
+mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
 });
 
+mongoose.connection.on('error', (err) => {
+  console.error(`MongoDB connection error: ${err}`);
+});
 
-// mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('disconnected', () => {
+  console.log('Disconnected from MongoDB');
+});
 
-// mongoose.connection.on('connected', () => {
-//   console.log('Connected to MongoDB');
-// });
-
-// mongoose.connection.on('error', (err) => {
-//   console.error(`MongoDB connection error: ${err}`);
-// });
-
-// mongoose.connection.on('disconnected', () => {
-//   console.log('Disconnected from MongoDB');
-// });
-
-// process.on('SIGINT', async () => {
-//   await mongoose.connection.close();
-//   process.exit(0);
-// });
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  process.exit(0);
+});
 
 
 //route files path
