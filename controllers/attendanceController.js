@@ -28,7 +28,7 @@ module.exports = {
         userId,
         inDate: currentDate,
         outDate: null,
-        location: {
+        locationIn: {
           type: 'Point',
           coordinates: [parseFloat(lat), parseFloat(long)],
         },
@@ -72,7 +72,7 @@ module.exports = {
           $set: {
             outDate: new Date(),
             status: "OUT",
-            location: {
+            locationOut: {
               type: 'Point',
               coordinates: [parseFloat(lat), parseFloat(long)],
             },
@@ -100,7 +100,7 @@ module.exports = {
       const { userId } = req.params;
 
       // Find the user by ID
-      const attendance = await attendanceModel.findOne({ _id: userId });
+      const attendance = await attendanceModel.findOne({ userId: userId });
 
       if (!attendance) {
         return res.status(404).json({ error: 'Not Found', message: 'Attendance record not found for the given user ID' });
