@@ -157,5 +157,52 @@ module.exports = {
 
   },
 
+  // taskDone
+  taskDone: async (req, res) => {
+
+    try {
+
+      const { taskId } = req.params;
+
+      // Check if the task exists
+      const existingTask = await taskModel.findById(taskId);
+
+      if (!taskId) {
+        return res.status(400).json({ error: 'Task id is empty' });
+      }
+
+      if (!existingTask) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+
+
+
+      const updateTask = {
+        status: "Done",
+
+      };
+
+      const result = await taskModel.updateOne({ _id: taskId }, updateTask);
+
+      if (result.matchedCount === 1) {
+
+        console.log('Task done successfully');
+        res.status(200).json({ message: 'Task done successfully' });
+
+
+      } else {
+
+        console.log('Task not found');
+        res.status(500).json({ message: 'Task not found' });
+
+      }
+
+    } catch (error) {
+      console.error('Error in updating task:', error);
+      res.status(500).json({ message: 'Internal Server Error', error });
+    }
+
+  },
+
 };
 //module.exports end

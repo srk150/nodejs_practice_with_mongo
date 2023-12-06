@@ -1,4 +1,5 @@
 const clientModel = require('../models/clientModel');
+const userService = require('../services/userService');
 
 module.exports = {
     //For attendance in api
@@ -6,17 +7,42 @@ module.exports = {
     createClient: async (req, res) => {
 
         try {
-            const { clientName } = req.body;
 
-            // Check if any of the properties is empty or falsy
-            if (!clientName) {
-                return res.status(400).json({ error: 'Client name is empty' });
+            const { clientName, clientEmail, clientMobile, lat, long } = req.body;
+
+            if (!clientName || !clientEmail || !clientMobile || !lat || !long) {
+                return res.status(400).json({ error: 'One or more fields are empty' });
             }
+
+            const existingEmail = await clientModel.findOne({ clientEmail });
+            const existingMobile = await clientModel.findOne({ clientMobile });
+
+            if (!await userService.isValidEmail(clientEmail)) {
+                return res.status(400).json({ message: 'Invalid email address' });
+            }
+            if (!await userService.isValidMobile(clientMobile)) {
+                return res.status(400).json({ message: 'Invalid mobile number' });
+            }
+
+            if (existingEmail) {
+                return res.status(400).json({ message: 'Email already exists' });
+            }
+
+            if (existingMobile) {
+                return res.status(400).json({ message: 'Mobile already exists' });
+            }
+
 
             const currentDate = new Date();
 
             const newClient = new clientModel({
                 clientName,
+                clientEmail,
+                clientMobile,
+                clientLocation: {
+                    type: 'Point',
+                    coordinates: [parseFloat(lat), parseFloat(long)],
+                },
                 created: currentDate,
 
             });

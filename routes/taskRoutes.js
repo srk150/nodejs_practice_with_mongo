@@ -8,5 +8,6 @@ router.get('/list', taskController.taskList);
 router.get('/edit/:taskID', taskController.taskEdit);
 router.post('/update', taskController.taskUpdate);
 router.delete('/delete/:taskId', taskController.taskDelete);
+router.get('/done/:taskId', taskController.taskDone);
 
 module.exports = router;

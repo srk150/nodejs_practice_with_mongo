@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 // Define the user schema
 const attendanceSchema = new mongoose.Schema({
- 
+
   userId: {
     type: String,
     required: true,
@@ -14,9 +14,11 @@ const attendanceSchema = new mongoose.Schema({
 
   outDate: {
     type: Date,
+    default: 'Null',
+
   },
 
-  location: {
+  locationIn: {
     type: {
       type: String,
       enum: ['Point'],
@@ -27,10 +29,21 @@ const attendanceSchema = new mongoose.Schema({
       required: true,
     },
   },
+
+  locationOut: {
+    type: {
+      type: String,
+      enum: ['Point'],
+    },
+    coordinates: {
+      type: [Number],
+    },
+  },
+
   status: {
     type: String,
-    enum: ['IN', 'OUT'], 
-    default: 'IN', 
+    enum: ['IN', 'OUT'],
+    default: 'IN',
   },
 }, { versionKey: false });
 
