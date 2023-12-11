@@ -75,5 +75,33 @@ module.exports = {
     },
 
 
+
+    //Client delete
+    clientDelete: async (req, res) => {
+
+        try {
+
+            const { clientId } = req.params;
+
+            // Check if the task exists
+            const existingClient = await clientModel.findById(clientId);
+
+            if (!existingClient) {
+                return res.status(404).json({ message: 'Client not found' });
+            }
+
+            // Perform the deletion
+            await clientModel.findByIdAndDelete(clientId);
+
+            // Send a success response
+            res.status(200).json({ message: 'Client deleted successfully' });
+        } catch (error) {
+            console.error('Error for Client Delete:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        }
+
+    },
+
+
 };
 //module.exports end
