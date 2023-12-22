@@ -1,4 +1,7 @@
 const User = require('../models/user');
+const attendanceModel = require('../models/attendanceModel');
+const taskModel = require('../models/taskModel');
+
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 
@@ -298,6 +301,29 @@ module.exports = {
       res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
       console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
+
+  //getUserTrack
+  getUserTrack: async (req, res) => {
+    try {
+
+      const userId = req.params.userId;
+
+      const user = await User.findById(userId, '-password -otp');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const attendance = await attendanceModel.find({ userId });
+      const tasks = await taskModel.find({ userId });
+
+      res.status(200).json({ user, attendance, tasks });
+
+    } catch (error) {
+      console.error('Error fetching user--tracking-related data:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },

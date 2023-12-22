@@ -13,5 +13,6 @@ router.post('/create-user', userController.signup);
 router.get('/userList', userController.getAllUser);
 router.get('/profile/:userId', userController.getUserProfile);
 router.put('/update-profile/:userId', userController.updateUserProfile);
+router.get('/trackUser/:userId', userController.getUserTrack);
 
 module.exports = router;
