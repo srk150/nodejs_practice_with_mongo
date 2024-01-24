@@ -116,7 +116,6 @@ module.exports = {
   },
 
 
-<<<<<<< HEAD
  
   //get distance and duration 
   getDuration: async (req, res) => {
@@ -144,10 +143,7 @@ module.exports = {
   
     
   },
-=======
-
->>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
-
+ 
 };
 //module.exports end
 

@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 const validator   = require('validator');
-=======
-const validator = require('validator');
 const axios = require('axios');
->>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
-
 
 async function isValidEmail(email) {
   return validator.isEmail(email);
@@ -36,9 +31,6 @@ async function generateOTP() {
   return otpCode.toString();
 }
 
-<<<<<<< HEAD
-module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP  };
-=======
 
 // distanceMiddleware.js
 async function calculateDistanceAndDuration(originCoords, destinationCoords) {
@@ -62,7 +54,8 @@ async function calculateDistanceAndDuration(originCoords, destinationCoords) {
 }
 
 
-
-
 module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP, calculateDistanceAndDuration, parseCoordinates };
->>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
+
+
+
+

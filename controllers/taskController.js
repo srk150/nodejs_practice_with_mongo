@@ -56,7 +56,6 @@ module.exports = {
       res.status(500).json({ message: 'Internal Server Error', error });
     }
 
-<<<<<<< HEAD
   },
 
   //task Edit
@@ -208,11 +207,6 @@ module.exports = {
       res.status(500).json({ message: 'Internal Server Error', error });
     }
 
-  },
-
-};
-//module.exports end
-=======
   },
 
   //task Edit
@@ -416,6 +410,3 @@ module.exports = {
 
 };
 //module.exports end
-
-
->>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
