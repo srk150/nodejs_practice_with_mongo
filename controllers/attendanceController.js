@@ -1,4 +1,5 @@
 const attendanceModel = require('../models/attendanceModel');
+const axios = require('axios');
 
 module.exports = {
   //For attendance in api
@@ -112,6 +113,35 @@ module.exports = {
       res.status(500).json({ error: 'Internal Server Error', message: error.message });
     }
 
+  },
+
+
+ 
+  //get distance and duration 
+  getDuration: async (req, res) => {
+
+    const apiKey = 'AIzaSyDYeQEY_frv3y8RV-y0mGfXY8EmLeZWorI';
+
+    const origin = req.body.origin;
+    const destination = req.body.destination;
+
+  try {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`
+    );
+
+    // console.log(response);
+
+    const distance = response.data.rows[0].elements[0].distance.text;
+    const duration = response.data.rows[0].elements[0].duration.text;
+
+    res.json({ distance, duration });
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+  
+    
   },
 
 };

@@ -1,4 +1,3 @@
 # matches any files and directories with the name postmanCollection
-
-/postmanCollection/
+/node_modules/
 .env
