@@ -1,4 +1,7 @@
 const User = require('../models/user');
+const attendanceModel = require('../models/attendanceModel');
+const taskModel = require('../models/taskModel');
+
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 
@@ -6,31 +9,19 @@ module.exports = {
   //For create employee api
   signup: async (req, res) => {
     try {
-      const { username, fullname, mobile, email } = req.body;
+      const { fullname, mobile, userType, machineNumber, workLocation } = req.body;
 
-      // Check if the user already exists
-      const existingUser = await User.findOne({ email });
-
-      // Check if the username already exists
-      const existingUsername = await User.findOne({ username });
+      if (!fullname || !mobile || !userType || !machineNumber || !workLocation) {
+        return res.status(400).json({ error: 'One or more fields are empty' });
+      }
 
       // Check if the mobile already exists
       const existingMobile = await User.findOne({ mobile });
 
-      if (!await userService.isValidEmail(email)) {
-        return res.status(400).json({ message: 'Invalid email address' });
-      }
+
 
       if (!await userService.isValidMobile(mobile)) {
         return res.status(400).json({ message: 'Invalid mobile number' });
-      }
-
-      if (existingUser) {
-        return res.status(400).json({ message: 'Email already exists' });
-      }
-
-      if (existingUsername) {
-        return res.status(400).json({ message: 'Username already exists' });
       }
 
       if (existingMobile) {
@@ -39,7 +30,7 @@ module.exports = {
 
 
       // Create a new user
-      const newUser = new User({ username, fullname, mobile, email });
+      const newUser = new User({ fullname, mobile, userType, machineNumber, workLocation });
 
       // Save the user to the database
       await newUser.save();
@@ -271,7 +262,14 @@ module.exports = {
   updateUserProfile: async (req, res) => {
     try {
       const { userId } = req.params;
-      const { fullname, username, email, newPassword } = req.body;
+      // const { fullname, username, email, newPassword } = req.body;
+
+      const { fullname, mobile, userType, machineNumber, workLocation } = req.body;
+
+      if (!fullname || !mobile || !userType || !machineNumber || !workLocation) {
+        return res.status(400).json({ error: 'One or more fields are empty' });
+      }
+
 
       // Find the user by ID
       const user = await User.findById(userId);
@@ -280,17 +278,29 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
 
+      // Check if the mobile already exists
+      const existingMobile = await User.findOne({ mobile });
+
+      if (!await userService.isValidMobile(mobile)) {
+        return res.status(400).json({ message: 'Invalid mobile number' });
+      }
+      if (existingMobile) {
+        return res.status(400).json({ message: 'Mobile already exists' });
+      }
+
       // Update profile fields
-      user.username = username || user.username;
-      user.email = email || user.email;
       user.fullname = fullname || user.fullname;
+      user.mobile = mobile || user.mobile;
+      user.userType = userType || user.userType;
+      user.machineNumber = machineNumber || user.machineNumber;
+      user.workLocation = workLocation || user.workLocation;
 
       // Update password if newPassword is provided
-      if (newPassword) {
-        // Hash the new password
-        const hashedPassword = await userService.hashPassword(newPassword);
-        user.password = hashedPassword;
-      }
+      // if (newPassword) {
+      //   // Hash the new password
+      //   const hashedPassword = await userService.hashPassword(newPassword);
+      //   user.password = hashedPassword;
+      // }
 
       // Save the updated user to the database
       await user.save();
@@ -298,6 +308,29 @@ module.exports = {
       res.status(200).json({ message: 'Profile updated successfully' });
     } catch (error) {
       console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
+
+  //getUserTrack
+  getUserTrack: async (req, res) => {
+    try {
+
+      const userId = req.params.userId;
+
+      const user = await User.findById(userId, '-password -otp');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      const attendance = await attendanceModel.find({ userId });
+      const tasks = await taskModel.find({ userId });
+
+      res.status(200).json({ user, attendance, tasks });
+
+    } catch (error) {
+      console.error('Error fetching user--tracking-related data:', error);
       res.status(500).json({ message: 'Internal Server Error' });
     }
   },

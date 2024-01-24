@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 const validator   = require('validator');
+=======
+const validator = require('validator');
+const axios = require('axios');
+>>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
 
 
 async function isValidEmail(email) {
@@ -13,6 +18,12 @@ async function isValidPassword(password) {
   return validator.isLength(password, { min: 5 });
 }
 
+async function parseCoordinates(coordinates) {
+  const [lat, lng] = coordinates.split(',').map(coord => parseFloat(coord.trim()));
+  return { lat, lng };
+}
+
+
 async function generateOTP() {
 
   const otpLength = 4;
@@ -22,7 +33,36 @@ async function generateOTP() {
   // Generate a random 4-digit number
   const otpCode = Math.floor(Math.random() * (max - min + 1)) + min;
 
-  return otpCode.toString();  
+  return otpCode.toString();
 }
 
+<<<<<<< HEAD
 module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP  };
+=======
+
+// distanceMiddleware.js
+async function calculateDistanceAndDuration(originCoords, destinationCoords) {
+
+  const apiKey = process.env.GMAPAPI;
+
+  try {
+    const response = await axios.get('https://maps.googleapis.com/maps/api/distancematrix/json', {
+      params: {
+        origins: `${originCoords.lat},${originCoords.lng}`,
+        destinations: `${destinationCoords.lat},${destinationCoords.lng}`,
+        key: apiKey,
+      },
+    });
+
+    return response;
+
+  } catch (error) {
+    console.error('Error fetching distance and duration:', error.message);
+  }
+}
+
+
+
+
+module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP, calculateDistanceAndDuration, parseCoordinates };
+>>>>>>> 901b015016d63b6953ccd2b8745bdcfabc134872
