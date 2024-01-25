@@ -278,14 +278,20 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      // Check if the mobile already exists
-      const existingMobile = await User.findOne({ mobile });
-
+      
+     
       if (!await userService.isValidMobile(mobile)) {
         return res.status(400).json({ message: 'Invalid mobile number' });
       }
-      if (existingMobile) {
-        return res.status(400).json({ message: 'Mobile already exists' });
+
+
+      // If the mobile number is updated, check if it already exists for another user
+      if (mobile !== user.mobile) {
+        const existingMobile = await User.findOne({ mobile });
+
+        if (existingMobile && existingMobile._id.toString() !== userId) {
+          return res.status(400).json({ message: 'Mobile number already exists for another user' });
+        }
       }
 
       // Update profile fields
