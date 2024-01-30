@@ -341,6 +341,35 @@ module.exports = {
     }
   },
 
+  
+
+  //CurrentLocation
+  currentLocation: async (req, res) => {
+    try {
+      const { userId, lat, long } = req.body;
+
+      if (!userId || !lat || !long ) {
+        return res.status(400).json({ error: 'One or more fields are empty' });
+      }
+
+      const user = await User.findById(userId, '-password -otp');
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      user.latitude  = lat || user.latitude;
+      user.longitude = long || user.longitude;
+     
+      await user.save();
+
+      res.status(200).json({ message: 'Current location updated successfully' });
+
+    } catch (error) {
+      console.error('Error fetching user current location', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
 
 
 };

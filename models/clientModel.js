@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const clientSchema = new mongoose.Schema({
 
 
-    clientName: {
+    clientFullName: {
         type: String,
         required: true,
     },
@@ -16,6 +16,44 @@ const clientSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+
+    clientCompany: {
+        type: String,
+        required: true,
+    },
+
+    clientAddress: {
+        type: String,
+        required: true,
+    },
+
+    clientCity: {
+        type: String,
+        required: true,
+    },
+
+    clientState: {
+        type: String,
+        required: true,
+    },
+
+    clientCountry: {
+        type: String,
+        required: true,
+    },
+
+
+    clientZip: {
+        type: String,
+        required: true,
+    },
+
+    clientDocument: {
+        type: String,
+        default: '',
+    },
+
+
     created: {
         type: Date,
         required: true,

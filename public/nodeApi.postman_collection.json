@@ -13,7 +13,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"username\": \"ecmp\",\r\n  \"fullname\": \"ecmp Khan\",\r\n  \"email\": \"ecmp@gmail.com\",\r\n  \"mobile\": \"9784651320\"\r\n\r\n}\r\n",
+					"raw": "{\r\n  \"fullname\": \"Sharukh Khan\",\r\n  \"mobile\": \"9786543120\",\r\n  \"userType\": \"Admin\",\r\n  \"machineNumber\": \"202122\",\r\n  \"workLocation\": \"MR 9, INDORE\"\r\n\r\n\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -214,7 +214,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/user/profile/6569b63c09b851cf35378bd1",
+					"raw": "http://localhost:3000/api/user/profile/65b1fe7c9b5e04bd1d32d149",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -224,7 +224,7 @@
 						"api",
 						"user",
 						"profile",
-						"6569b63c09b851cf35378bd1"
+						"65b1fe7c9b5e04bd1d32d149"
 					]
 				}
 			},
@@ -237,7 +237,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"ecmp\",\r\n    \"fullname\": \"ecmp drdo\",\r\n    \"email\": \"ecmp@gmail.com\",\r\n    \"mobile\": \"9784651320\"\r\n}",
+					"raw": "{\r\n  \"fullname\": \"Golu\",\r\n  \"mobile\": \"9786543120\",\r\n  \"userType\": \"subadmin\",\r\n  \"machineNumber\": \"1230\",\r\n  \"workLocation\": \"MR 9, INDORE\"\r\n\r\n\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -245,7 +245,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/api/user/update-profile/6569b63c09b851cf35378bd1",
+					"raw": "http://localhost:3000/api/user/update-profile/65b22e2d6282913296873181",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -255,7 +255,7 @@
 						"api",
 						"user",
 						"update-profile",
-						"6569b63c09b851cf35378bd1"
+						"65b22e2d6282913296873181"
 					]
 				}
 			},
@@ -298,7 +298,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"userId\": \"6569b63c09b851cf35378bd1\",\r\n  \"lat\": \"10.113223132\",\r\n  \"long\": \"11.32113112\"\r\n}\r\n",
+					"raw": "{\r\n  \"userId\": \"65b1fe2c9b5e04bd1d32d144\",\r\n  \"lat\": \"10.113223132\",\r\n  \"long\": \"11.32113112\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -328,7 +328,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n  \"userId\": \"6569b63c09b851cf35378bd1\",\r\n  \"lat\": \"12.032313321312\",\r\n  \"long\": \"13.979898798798\"\r\n}\r\n",
+					"raw": "{\r\n  \"userId\": \"65b1fe2c9b5e04bd1d32d144\",\r\n  \"lat\": \"12.032313321312\",\r\n  \"long\": \"13.979898798798\"\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -399,7 +399,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"userId\": \"1\",\r\n    \"clientId\": \"2\",\r\n    \"task\": \"demo ployster\",\r\n    \"taskDesc\": \"test for test\",\r\n    \"address\": \"aanand nagar,indore\",\r\n    \"lat\": \"12.31312131\",\r\n    \"long\": \"5.56654654\"\r\n\r\n}\r\n\r\n\r\n",
+					"raw": "{\r\n    \"userId\": \"165b1fe2c9b5e04bd1d32d144\",\r\n    \"clientId\": \"2\",\r\n    \"task\": \"demo ployster\",\r\n    \"taskDesc\": \"test for test\",\r\n    \"address\": \"aanand nagar,indore\",\r\n    \"lat\": \"12.31312131\",\r\n    \"long\": \"5.56654654\"\r\n\r\n}\r\n\r\n\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -472,7 +472,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"taskID\": \"656f0036549de956ec9a7aa0\",\r\n    \"userId\": \"786\",\r\n    \"clientId\": \"987\",\r\n    \"task\": \"paint wall\",\r\n    \"taskDesc\": \"on gro\",\r\n    \"address\": \"shree nagar,indore\",\r\n    \"lat\": \"12.111111\",\r\n    \"long\": \"5.5555555555\"\r\n\r\n}\r\n\r\n\r\n",
+					"raw": "{\r\n    \"taskID\": \"65b889270a1374969afd3baa\",\r\n    \"userId\": \"65b1fe2c9b5e04bd1d32d144\",\r\n    \"clientId\": \"987\",\r\n    \"task\": \"paint wall\",\r\n    \"taskDesc\": \"on gro\",\r\n    \"address\": \"shree nagar,indore\",\r\n    \"lat\": \"12.111111\",\r\n    \"long\": \"5.5555555555\"\r\n\r\n}\r\n\r\n\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -544,13 +544,69 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"clientName\": \"Shahrukh Khan\", \r\n    \"clientEmail\": \"srkd+1w@gmail.com\", \r\n    \"clientMobile\": \"6234567898\", \r\n    \"lat\": \"11.65415465\", \r\n    \"long\": \"12.654645464\"\r\n   \r\n}\r\n\r\n\r\n\r\n\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "clientFullName",
+							"value": "Govinda22",
+							"type": "text"
+						},
+						{
+							"key": "clientEmail",
+							"value": "demo1@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "clientMobile",
+							"value": "1326549788",
+							"type": "text"
+						},
+						{
+							"key": "clientCompany",
+							"value": "ddd",
+							"type": "text"
+						},
+						{
+							"key": "clientAddress",
+							"value": "doa",
+							"type": "text"
+						},
+						{
+							"key": "clientCity",
+							"value": "mumbai",
+							"type": "text"
+						},
+						{
+							"key": "clientState",
+							"value": "MH",
+							"type": "text"
+						},
+						{
+							"key": "clientCountry",
+							"value": "India",
+							"type": "text"
+						},
+						{
+							"key": "clientZip",
+							"value": "456688",
+							"type": "text"
+						},
+						{
+							"key": "lat",
+							"value": "0.111222333",
+							"type": "text"
+						},
+						{
+							"key": "long",
+							"value": "1.33334444555",
+							"type": "text"
+						},
+						{
+							"key": "clientDocument",
+							"type": "file",
+							"src": "/C:/Users/Web/Downloads/1.png"
 						}
-					}
+					]
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/client/create",
@@ -596,7 +652,7 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/client/delete/65701fd48a711849383674a5",
+					"raw": "http://localhost:3000/api/client/delete/65b7984ab907bebe6d488684",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -606,7 +662,7 @@
 						"api",
 						"client",
 						"delete",
-						"65701fd48a711849383674a5"
+						"65b7984ab907bebe6d488684"
 					]
 				}
 			},
@@ -648,7 +704,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/user/trackUser/6569b63c09b851cf35378bd1",
+					"raw": "http://localhost:3000/api/user/trackUser/65b1fe2c9b5e04bd1d32d144",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -658,7 +714,151 @@
 						"api",
 						"user",
 						"trackUser",
-						"6569b63c09b851cf35378bd1"
+						"65b1fe2c9b5e04bd1d32d144"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ClientDetails",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/client/details/65b79813b907bebe6d488680",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"client",
+						"details",
+						"65b79813b907bebe6d488680"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clientUpdate",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "clientFullName",
+							"value": "MR Khan",
+							"type": "text"
+						},
+						{
+							"key": "clientEmail",
+							"value": "Beast@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "clientMobile",
+							"value": "7854963210",
+							"type": "text"
+						},
+						{
+							"key": "clientCompany",
+							"value": "beast",
+							"type": "text"
+						},
+						{
+							"key": "clientAddress",
+							"value": "banglore",
+							"type": "text"
+						},
+						{
+							"key": "clientCity",
+							"value": "pune",
+							"type": "text"
+						},
+						{
+							"key": "clientState",
+							"value": "PH",
+							"type": "text"
+						},
+						{
+							"key": "clientCountry",
+							"value": "India",
+							"type": "text"
+						},
+						{
+							"key": "clientZip",
+							"value": "10005",
+							"type": "text"
+						},
+						{
+							"key": "lat",
+							"value": "0.111222333",
+							"type": "text"
+						},
+						{
+							"key": "long",
+							"value": "1.33334444555",
+							"type": "text"
+						},
+						{
+							"key": "clientDocument",
+							"type": "file",
+							"src": "/C:/Users/Web/Downloads/sample.pdf",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/client/update-client/65b8df05e422e4d4da0a7029",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"client",
+						"update-client",
+						"65b8df05e422e4d4da0a7029"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "current-location-update",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\" : \"65b1fe7c9b5e04bd1d32d149\", \r\n    \"lat\"    : \"99.6459781\", \r\n    \"long\"   : \"77.3124659\"\r\n   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/user/current-location/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"user",
+						"current-location",
+						""
 					]
 				}
 			},
