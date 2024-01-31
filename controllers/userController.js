@@ -332,8 +332,42 @@ module.exports = {
 
       const attendance = await attendanceModel.find({ userId });
       const tasks = await taskModel.find({ userId });
+      const taskCount = tasks.length; // Count of tasks
+      
+     
+      //get distance lat long start
+      var distance ;
+      var duration ;
+      
+      // console.log(attendance.length);
 
-      res.status(200).json({ user, attendance, tasks });
+      if(attendance.length > 0 &&  attendance[0]['locationOut']['coordinates'][0]){
+
+      const originLat  = attendance[0]['locationIn']['coordinates'][0];
+      const originLong = attendance[0]['locationIn']['coordinates'][1];
+
+      const destinationLat  = attendance[0]['locationOut']['coordinates'][0];
+      const destinationLong = attendance[0]['locationOut']['coordinates'][1];
+      
+      const locationInLatLong =  originLat + ',' + originLong;
+      const locationOutLatLong =  destinationLat + ',' + destinationLong;
+
+      const originCoords = await userService.parseCoordinates(locationInLatLong);
+      const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+      const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+       distance = result.data.rows[0].elements[0].distance.text;
+       duration = result.data.rows[0].elements[0].duration.text;
+      
+      }else{
+
+         distance = 0;
+         duration = 0;
+      }
+      //end loc
+
+      res.status(200).json({ user, attendance, tasks, origin:{ distance:distance, duration:duration, taskCount:taskCount  } });
 
     } catch (error) {
       console.error('Error fetching user--tracking-related data:', error);

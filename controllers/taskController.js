@@ -4,27 +4,84 @@ const userService = require('../services/userService');
 const axios = require('axios');
 const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
 
+const multer = require('multer');
+const path = require('path');
+
+
+// Storage configuration for multer
+  const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "./public/taskDoc");
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+    },
+  });
+  
+  const upload = multer({ storage }).single("taskDocument");
+
+
 
 module.exports = {
   //For attendance in api
 
   createTask: async (req, res) => {
     try {
-      const { userId, clientId, task, taskDesc, address, lat, long } = req.body;
+
+
+          // Handle file upload using multer middleware
+          upload(req, res, async function (err) {
+
+              // upload(req, res, async (err) => {
+              if (err instanceof multer.MulterError) {
+                // A Multer error occurred when uploading.
+                console.error(err);
+                res.status(500).json({ error: "An error occurred during file upload." });
+              } else if (err) {
+                // An unknown error occurred when uploading.
+                console.error(err);
+                res.status(500).json({ error: "An unknown error occurred during file upload." });
+              } 
+
+      const { userId, clientId, clientName,  taskName, taskDate, address, lat, long } = req.body;
+
 
       // Check if any of the properties is empty or falsy
-      if (!userId || !clientId || !task || !taskDesc || !address || !lat || !long) {
+      if (!userId || !clientId  || !clientName || !taskName || !taskDate || !address || !lat || !long) {
         return res.status(400).json({ error: 'One or more fields are empty' });
       }
+
+
+            // Check if file was provided
+            let uploadedFile = '';
+
+            if (!req.file) {
+          
+                uploadedFile = '';
+
+            }else{
+            
+                //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
+                  uploadedFile = "taskDoc/" + req.file.filename;
+
+            }
+
+
+
+
       const currentDate = new Date();
 
       const newTask = new taskModel({
         userId,
         clientId,
-        task,
-        taskDesc,
+        clientName,
+        taskName,
+        taskDate,
         address,
         created: currentDate,
+        taskDocument: uploadedFile,
         location: {
           type: 'Point',
           coordinates: [parseFloat(lat), parseFloat(long)],
@@ -34,6 +91,8 @@ module.exports = {
       await newTask.save();
 
       res.status(201).json({ message: 'Task created successfully' });
+
+    });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error in creating task' });
@@ -87,26 +146,64 @@ module.exports = {
 
     try {
 
-      const { taskID, userId, clientId, task, taskDesc, address, lat, long } = req.body;
+
+      // Handle file upload using multer middleware
+      upload(req, res, async function (err) {
+
+          // upload(req, res, async (err) => {
+          if (err instanceof multer.MulterError) {
+            // A Multer error occurred when uploading.
+            console.error(err);
+            res.status(500).json({ error: "An error occurred during file upload." });
+          } else if (err) {
+            // An unknown error occurred when uploading.
+            console.error(err);
+            res.status(500).json({ error: "An unknown error occurred during file upload." });
+          } 
+
+
+
+      const { taskID, userId, clientId, clientName,  taskName, taskDate, address, lat, long } = req.body;
+
 
       // Check if any of the properties is empty or falsy
       if (!taskID) {
         return res.status(400).json({ error: 'Task id is empty' });
       }
 
-      if (!userId || !clientId || !task || !taskDesc || !address || !lat || !long) {
-        return res.status(400).json({ error: 'One or more fields are empty' });
-      }
+        // Check if any of the properties is empty or falsy
+        if (!userId || !clientId  || !clientName || !taskName || !taskDate || !address || !lat || !long) {
+          return res.status(400).json({ error: 'One or more fields are empty' });
+        }
+
+
+        // Check if file was provided
+        let uploadedFile = '';
+
+        if (!req.file) {
+      
+            uploadedFile = '';
+
+        }else{
+        
+            //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
+              uploadedFile = "taskDoc/" + req.file.filename;
+
+        }
+
+
 
       const currentDate = new Date();
 
       const newTask = {
         clientId,
-        task,
+        clientName,
+        taskName,
         userId,
-        taskDesc,
+        taskDate,
         address,
         created: currentDate,
+        taskDocument: uploadedFile,
         location: {
           type: 'Point',
           coordinates: [parseFloat(lat), parseFloat(long)],
@@ -127,6 +224,8 @@ module.exports = {
         res.status(500).json({ message: 'Task not found' });
 
       }
+
+    });
 
 
     } catch (error) {
@@ -234,58 +333,58 @@ module.exports = {
 
   },
   //task Update
-  taskUpdate: async (req, res) => {
+  // taskUpdate: async (req, res) => {
 
-    try {
+  //   try {
 
-      const { taskID, userId, clientId, task, taskDesc, address, lat, long } = req.body;
+  //     const { taskID, userId, clientId, task, taskDesc, address, lat, long } = req.body;
 
-      // Check if any of the properties is empty or falsy
-      if (!taskID) {
-        return res.status(400).json({ error: 'Task id is empty' });
-      }
+  //     // Check if any of the properties is empty or falsy
+  //     if (!taskID) {
+  //       return res.status(400).json({ error: 'Task id is empty' });
+  //     }
 
-      if (!userId || !clientId || !task || !taskDesc || !address || !lat || !long) {
-        return res.status(400).json({ error: 'One or more fields are empty' });
-      }
+  //     if (!userId || !clientId || !task || !taskDesc || !address || !lat || !long) {
+  //       return res.status(400).json({ error: 'One or more fields are empty' });
+  //     }
 
-      const currentDate = new Date();
+  //     const currentDate = new Date();
 
-      const newTask = {
-        clientId,
-        task,
-        userId,
-        taskDesc,
-        address,
-        created: currentDate,
-        location: {
-          type: 'Point',
-          coordinates: [parseFloat(lat), parseFloat(long)],
-        },
-      };
+  //     const newTask = {
+  //       clientId,
+  //       task,
+  //       userId,
+  //       taskDesc,
+  //       address,
+  //       created: currentDate,
+  //       location: {
+  //         type: 'Point',
+  //         coordinates: [parseFloat(lat), parseFloat(long)],
+  //       },
+  //     };
 
-      const result = await taskModel.updateOne({ _id: taskID }, newTask);
+  //     const result = await taskModel.updateOne({ _id: taskID }, newTask);
 
-      if (result.matchedCount === 1) {
+  //     if (result.matchedCount === 1) {
 
-        console.log('Task updated successfully');
-        res.status(200).json({ message: 'Task updated successfully' });
-
-
-      } else {
-
-        console.log('Task not found');
-        res.status(500).json({ message: 'Task not found' });
-
-      }
+  //       console.log('Task updated successfully');
+  //       res.status(200).json({ message: 'Task updated successfully' });
 
 
-    } catch (error) {
-      console.error('Error for update the task:', error);
-      res.status(500).json({ message: 'Internal Server Error', error });
-    }
+  //     } else {
 
-  },
+  //       console.log('Task not found');
+  //       res.status(500).json({ message: 'Task not found' });
+
+  //     }
+
+
+  //   } catch (error) {
+  //     console.error('Error for update the task:', error);
+  //     res.status(500).json({ message: 'Internal Server Error', error });
+  //   }
+
+  // },
 
   //task delete
   taskDelete: async (req, res) => {
@@ -385,21 +484,26 @@ module.exports = {
 
 
 
-      // res.status(200).json(distance, duration);
-      res.status(200).json({
-        message: 'Get successfully', distance,
-        duration,
-        origin: {
-          address: origin_addresses,
-          coordinates: originCoords,
-        },
-        destination: {
-          address: destination_addresses,
-          coordinates: destinationCoords,
-        },
-        destination_addresses,
-        origin_addresses,
-      });
+          res.status(200).json({
+                message: 'Get successfully', distance,
+                duration
+               
+              });     
+
+      // res.status(200).json({
+      //   message: 'Get successfully', distance,
+      //   duration,
+      //   origin: {
+      //     address: origin_addresses,
+      //     coordinates: originCoords,
+      //   },
+      //   destination: {
+      //     address: destination_addresses,
+      //     coordinates: destinationCoords,
+      //   },
+      //   destination_addresses,
+      //   origin_addresses,
+      // });
 
     } catch (error) {
       console.error('Error fetching distance and duration:', error.message);

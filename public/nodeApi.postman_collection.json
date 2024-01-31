@@ -376,7 +376,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/task/edit/656f0036549de956ec9a7aa0",
+					"raw": "http://localhost:3000/api/task/edit/65ba39a7f839cdbd49aef2b9",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -386,7 +386,7 @@
 						"api",
 						"task",
 						"edit",
-						"656f0036549de956ec9a7aa0"
+						"65ba39a7f839cdbd49aef2b9"
 					]
 				}
 			},
@@ -398,13 +398,54 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"userId\": \"165b1fe2c9b5e04bd1d32d144\",\r\n    \"clientId\": \"2\",\r\n    \"task\": \"demo ployster\",\r\n    \"taskDesc\": \"test for test\",\r\n    \"address\": \"aanand nagar,indore\",\r\n    \"lat\": \"12.31312131\",\r\n    \"long\": \"5.56654654\"\r\n\r\n}\r\n\r\n\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "userId",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "clientId",
+							"value": "2222",
+							"type": "text"
+						},
+						{
+							"key": "clientName",
+							"value": "rf",
+							"type": "text"
+						},
+						{
+							"key": "taskName",
+							"value": "PAint Wall",
+							"type": "text"
+						},
+						{
+							"key": "taskDate",
+							"value": "2 jan 2024",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "azad nagarindore",
+							"type": "text"
+						},
+						{
+							"key": "lat",
+							"value": "12.31312131",
+							"type": "text"
+						},
+						{
+							"key": "long",
+							"value": "5.56654654",
+							"type": "text"
+						},
+						{
+							"key": "taskDocument",
+							"type": "file",
+							"src": "/C:/Users/Web/Downloads/1.png"
 						}
-					}
+					]
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/task/create",
@@ -471,13 +512,60 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\r\n    \"taskID\": \"65b889270a1374969afd3baa\",\r\n    \"userId\": \"65b1fe2c9b5e04bd1d32d144\",\r\n    \"clientId\": \"987\",\r\n    \"task\": \"paint wall\",\r\n    \"taskDesc\": \"on gro\",\r\n    \"address\": \"shree nagar,indore\",\r\n    \"lat\": \"12.111111\",\r\n    \"long\": \"5.5555555555\"\r\n\r\n}\r\n\r\n\r\n",
-					"options": {
-						"raw": {
-							"language": "json"
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "taskID",
+							"value": "65ba3c2da8ad724a5cd8a0a5",
+							"type": "text"
+						},
+						{
+							"key": "userId",
+							"value": "6456465464",
+							"type": "text"
+						},
+						{
+							"key": "clientId",
+							"value": "2222",
+							"type": "text"
+						},
+						{
+							"key": "clientName",
+							"value": "rf",
+							"type": "text"
+						},
+						{
+							"key": "taskName",
+							"value": "PAint house",
+							"type": "text"
+						},
+						{
+							"key": "taskDate",
+							"value": "2 jan 2024",
+							"type": "text"
+						},
+						{
+							"key": "address",
+							"value": "azad nagarindore",
+							"type": "text"
+						},
+						{
+							"key": "lat",
+							"value": "12.31312131",
+							"type": "text"
+						},
+						{
+							"key": "long",
+							"value": "5.56654654",
+							"type": "text"
+						},
+						{
+							"key": "taskDocument",
+							"type": "file",
+							"src": "/C:/Users/Web/Downloads/1.png",
+							"disabled": true
 						}
-					}
+					]
 				},
 				"url": {
 					"raw": "http://localhost:3000/api/task/update",
@@ -675,7 +763,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"origin\": \"22.745866368849157, 75.89320790236201\",\r\n    \"destination\": \"22.72488854206798, 75.8871568391261\"\r\n   \r\n}\r\n",
+					"raw": "{\r\n    \"origin\": \"22.74588036270176,75.89307162536392\",\r\n    \"destination\": \"22.731213188381467,75.90812743885702\"\r\n   \r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -700,9 +788,21 @@
 		},
 		{
 			"name": "track-user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
 			"request": {
 				"method": "GET",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
 					"raw": "http://localhost:3000/api/user/trackUser/65b1fe2c9b5e04bd1d32d144",
 					"protocol": "http",
@@ -726,7 +826,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/api/client/details/65b79813b907bebe6d488680",
+					"raw": "http://localhost:3000/api/client/details/65b8df05e422e4d4da0a7029",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -736,7 +836,7 @@
 						"api",
 						"client",
 						"details",
-						"65b79813b907bebe6d488680"
+						"65b8df05e422e4d4da0a7029"
 					]
 				}
 			},
@@ -767,7 +867,7 @@
 						},
 						{
 							"key": "clientCompany",
-							"value": "beast",
+							"value": "mrKhan",
 							"type": "text"
 						},
 						{
@@ -808,8 +908,7 @@
 						{
 							"key": "clientDocument",
 							"type": "file",
-							"src": "/C:/Users/Web/Downloads/sample.pdf",
-							"disabled": true
+							"src": "/C:/Users/Web/Downloads/1.png"
 						}
 					]
 				},

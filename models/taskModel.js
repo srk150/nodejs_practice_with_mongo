@@ -11,16 +11,18 @@ const taskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  created: {
-    type: Date,
-    required: true,
-  },
-  task: {
+
+  clientName: {
     type: String,
     required: true,
   },
 
-  taskDesc: {
+  taskName: {
+    type: String,
+    required: true,
+  },
+
+  taskDate: {
     type: String,
     required: true,
   },
@@ -28,6 +30,16 @@ const taskSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
+  },
+
+  created: {
+    type: Date,
+    required: true,
+  },
+
+  taskDocument: {
+    type: String,
+    default: '',
   },
 
   location: {
