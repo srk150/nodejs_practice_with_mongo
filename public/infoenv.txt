@@ -1,6 +1,0 @@
-PORT=3000
-MONGODB_URI=mongodb://127.0.0.1:27017/nodeApi
-# MONGODB_URI=mongodb+srv://nodeApi:nodeApi@cluster0.wwt3puk.mongodb.net/?retryWrites=true&w=majority
-BASE_URL= http://localhost:3000
-GMAPAPI = AIzaSyDYeQEY_frv3y8RV-y0mGfXY8EmLeZWorI
-# Please try this AIzaSyDYeQEY_frv3y8RV-y0mGfXY8EmLeZWorI
