@@ -8,7 +8,7 @@ const upload = multer();
 
 // Define your all task Controller route
 router.post('/create', clientController.createClient);
-router.get('/list', clientController.clientList);
+router.get('/list/:vendorId', clientController.clientList);
 router.get('/details/:clientId', clientController.clientDetails);
 router.delete('/delete/:clientId', clientController.clientDelete);
 router.put('/update-client/:clientId', clientController.updateClient);

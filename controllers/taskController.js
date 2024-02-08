@@ -9,18 +9,18 @@ const path = require('path');
 
 
 // Storage configuration for multer
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "./public/taskDoc");
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      const ext = path.extname(file.originalname);
-      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
-    },
-  });
-  
-  const upload = multer({ storage }).single("taskDocument");
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "./public/taskDoc");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const ext = path.extname(file.originalname);
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
+});
+
+const upload = multer({ storage }).single("taskDocument");
 
 
 
@@ -31,68 +31,65 @@ module.exports = {
     try {
 
 
-          // Handle file upload using multer middleware
-          upload(req, res, async function (err) {
+      // Handle file upload using multer middleware
+      upload(req, res, async function (err) {
 
-              // upload(req, res, async (err) => {
-              if (err instanceof multer.MulterError) {
-                // A Multer error occurred when uploading.
-                console.error(err);
-                res.status(500).json({ error: "An error occurred during file upload." });
-              } else if (err) {
-                // An unknown error occurred when uploading.
-                console.error(err);
-                res.status(500).json({ error: "An unknown error occurred during file upload." });
-              } 
+        // upload(req, res, async (err) => {
+        if (err instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An error occurred during file upload." });
+        } else if (err) {
+          // An unknown error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An unknown error occurred during file upload." });
+        }
 
-      const { userId, clientId, clientName,  taskName, taskDate, address, lat, long } = req.body;
-
-
-      // Check if any of the properties is empty or falsy
-      if (!userId || !clientId  || !clientName || !taskName || !taskDate || !address || !lat || !long) {
-        return res.status(400).json({ error: 'One or more fields are empty' });
-      }
+        const { userId, clientId, clientName, taskName, taskDate, address, lat, long, vendorId } = req.body;
 
 
-            // Check if file was provided
-            let uploadedFile = '';
-
-            if (!req.file) {
-          
-                uploadedFile = '';
-
-            }else{
-            
-                //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
-                  uploadedFile = "taskDoc/" + req.file.filename;
-
-            }
+        // Check if any of the properties is empty or falsy
+        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long || !vendorId) {
+          return res.status(400).json({ error: 'One or more fields are empty' });
+        }
 
 
+        // Check if file was provided
+        let uploadedFile = '';
 
+        if (!req.file) {
 
-      const currentDate = new Date();
+          uploadedFile = '';
 
-      const newTask = new taskModel({
-        userId,
-        clientId,
-        clientName,
-        taskName,
-        taskDate,
-        address,
-        created: currentDate,
-        taskDocument: uploadedFile,
-        location: {
-          type: 'Point',
-          coordinates: [parseFloat(lat), parseFloat(long)],
-        },
+        } else {
+
+          //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
+          uploadedFile = "taskDoc/" + req.file.filename;
+
+        }
+
+        const currentDate = new Date();
+        const newTask = new taskModel({
+          userId,
+          clientId,
+          clientName,
+          taskName,
+          taskDate,
+          address,
+          created: currentDate,
+          taskDocument: uploadedFile,
+          vendorId: vendorId,
+          location: {
+            type: 'Point',
+            coordinates: [parseFloat(lat), parseFloat(long)],
+          },
+        });
+
+        await newTask.save();
+
+        res.status(201).json({ message: 'Task created successfully' });
+
       });
-
-      await newTask.save();
-
-      res.status(201).json({ message: 'Task created successfully' });
-
-    });
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'Internal Server Error in creating task' });
@@ -107,9 +104,18 @@ module.exports = {
   taskList: async (req, res) => {
 
     try {
-      const taskList = await taskModel.find();
+
+      const { vendorId } = req.params;
+
+
+      const taskList = await taskModel.find({ vendorId: vendorId });
+
+      if (!taskList || taskList.length === 0) { // Check if Task array is empty
+        return res.status(404).json({ message: 'Task not found' });
+      }
 
       res.status(200).json(taskList);
+
     } catch (error) {
       console.error('Error fetching all users:', error);
       res.status(500).json({ message: 'Internal Server Error', error });
@@ -150,29 +156,29 @@ module.exports = {
       // Handle file upload using multer middleware
       upload(req, res, async function (err) {
 
-          // upload(req, res, async (err) => {
-          if (err instanceof multer.MulterError) {
-            // A Multer error occurred when uploading.
-            console.error(err);
-            res.status(500).json({ error: "An error occurred during file upload." });
-          } else if (err) {
-            // An unknown error occurred when uploading.
-            console.error(err);
-            res.status(500).json({ error: "An unknown error occurred during file upload." });
-          } 
+        // upload(req, res, async (err) => {
+        if (err instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An error occurred during file upload." });
+        } else if (err) {
+          // An unknown error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An unknown error occurred during file upload." });
+        }
 
 
 
-      const { taskID, userId, clientId, clientName,  taskName, taskDate, address, lat, long } = req.body;
+        const { taskID, userId, clientId, clientName, taskName, taskDate, address, lat, long } = req.body;
 
-
-      // Check if any of the properties is empty or falsy
-      if (!taskID) {
-        return res.status(400).json({ error: 'Task id is empty' });
-      }
 
         // Check if any of the properties is empty or falsy
-        if (!userId || !clientId  || !clientName || !taskName || !taskDate || !address || !lat || !long) {
+        if (!taskID) {
+          return res.status(400).json({ error: 'Task id is empty' });
+        }
+
+        // Check if any of the properties is empty or falsy
+        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long) {
           return res.status(400).json({ error: 'One or more fields are empty' });
         }
 
@@ -181,51 +187,51 @@ module.exports = {
         let uploadedFile = '';
 
         if (!req.file) {
-      
-            uploadedFile = '';
 
-        }else{
-        
-            //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
-              uploadedFile = "taskDoc/" + req.file.filename;
+          uploadedFile = '';
+
+        } else {
+
+          //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
+          uploadedFile = "taskDoc/" + req.file.filename;
 
         }
 
 
 
-      const currentDate = new Date();
+        const currentDate = new Date();
 
-      const newTask = {
-        clientId,
-        clientName,
-        taskName,
-        userId,
-        taskDate,
-        address,
-        created: currentDate,
-        taskDocument: uploadedFile,
-        location: {
-          type: 'Point',
-          coordinates: [parseFloat(lat), parseFloat(long)],
-        },
-      };
+        const newTask = {
+          clientId,
+          clientName,
+          taskName,
+          userId,
+          taskDate,
+          address,
+          created: currentDate,
+          taskDocument: uploadedFile,
+          location: {
+            type: 'Point',
+            coordinates: [parseFloat(lat), parseFloat(long)],
+          },
+        };
 
-      const result = await taskModel.updateOne({ _id: taskID }, newTask);
+        const result = await taskModel.updateOne({ _id: taskID }, newTask);
 
-      if (result.matchedCount === 1) {
+        if (result.matchedCount === 1) {
 
-        console.log('Task updated successfully');
-        res.status(200).json({ message: 'Task updated successfully' });
+          console.log('Task updated successfully');
+          res.status(200).json({ message: 'Task updated successfully' });
 
 
-      } else {
+        } else {
 
-        console.log('Task not found');
-        res.status(500).json({ message: 'Task not found' });
+          console.log('Task not found');
+          res.status(500).json({ message: 'Task not found' });
 
-      }
+        }
 
-    });
+      });
 
 
     } catch (error) {
@@ -484,11 +490,11 @@ module.exports = {
 
 
 
-          res.status(200).json({
-                message: 'Get successfully', distance,
-                duration
-               
-              });     
+      res.status(200).json({
+        message: 'Get successfully', distance,
+        duration
+
+      });
 
       // res.status(200).json({
       //   message: 'Get successfully', distance,

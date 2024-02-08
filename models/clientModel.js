@@ -3,7 +3,10 @@ const mongoose = require('mongoose');
 // Define the user schema
 const clientSchema = new mongoose.Schema({
 
+    vendorId: {
+        type: String,
 
+    },
     clientFullName: {
         type: String,
         required: true,

@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 // Define the user schema
 const taskSchema = new mongoose.Schema({
 
+  vendorId: {
+    type: String,
+
+  },
+
   userId: {
     type: String,
     required: true,

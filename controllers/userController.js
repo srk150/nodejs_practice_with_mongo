@@ -278,8 +278,8 @@ module.exports = {
         return res.status(404).json({ message: 'User not found' });
       }
 
-      
-     
+
+
       if (!await userService.isValidMobile(mobile)) {
         return res.status(400).json({ message: 'Invalid mobile number' });
       }
@@ -333,41 +333,41 @@ module.exports = {
       const attendance = await attendanceModel.find({ userId });
       const tasks = await taskModel.find({ userId });
       const taskCount = tasks.length; // Count of tasks
-      
-     
+
+
       //get distance lat long start
-      var distance ;
-      var duration ;
-      
+      var distance;
+      var duration;
+
       // console.log(attendance.length);
 
-      if(attendance.length > 0 &&  attendance[0]['locationOut']['coordinates'][0]){
+      if (attendance.length > 0 && attendance[0]['locationOut']['coordinates'][0]) {
 
-      const originLat  = attendance[0]['locationIn']['coordinates'][0];
-      const originLong = attendance[0]['locationIn']['coordinates'][1];
+        const originLat = attendance[0]['locationIn']['coordinates'][0];
+        const originLong = attendance[0]['locationIn']['coordinates'][1];
 
-      const destinationLat  = attendance[0]['locationOut']['coordinates'][0];
-      const destinationLong = attendance[0]['locationOut']['coordinates'][1];
-      
-      const locationInLatLong =  originLat + ',' + originLong;
-      const locationOutLatLong =  destinationLat + ',' + destinationLong;
+        const destinationLat = attendance[0]['locationOut']['coordinates'][0];
+        const destinationLong = attendance[0]['locationOut']['coordinates'][1];
 
-      const originCoords = await userService.parseCoordinates(locationInLatLong);
-      const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+        const locationInLatLong = originLat + ',' + originLong;
+        const locationOutLatLong = destinationLat + ',' + destinationLong;
 
-      const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+        const originCoords = await userService.parseCoordinates(locationInLatLong);
+        const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
 
-       distance = result.data.rows[0].elements[0].distance.text;
-       duration = result.data.rows[0].elements[0].duration.text;
-      
-      }else{
+        const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
 
-         distance = 0;
-         duration = 0;
+        distance = result.data.rows[0].elements[0].distance.text;
+        duration = result.data.rows[0].elements[0].duration.text;
+
+      } else {
+
+        distance = 0;
+        duration = 0;
       }
       //end loc
 
-      res.status(200).json({ user, attendance, tasks, origin:{ distance:distance, duration:duration, taskCount:taskCount  } });
+      res.status(200).json({ user, attendance, tasks, origin: { distance: distance, duration: duration, taskCount: taskCount } });
 
     } catch (error) {
       console.error('Error fetching user--tracking-related data:', error);
@@ -375,14 +375,14 @@ module.exports = {
     }
   },
 
-  
+
 
   //CurrentLocation
   currentLocation: async (req, res) => {
     try {
       const { userId, lat, long } = req.body;
 
-      if (!userId || !lat || !long ) {
+      if (!userId || !lat || !long) {
         return res.status(400).json({ error: 'One or more fields are empty' });
       }
 
@@ -391,9 +391,9 @@ module.exports = {
         return res.status(404).json({ error: 'User not found' });
       }
 
-      user.latitude  = lat || user.latitude;
+      user.latitude = lat || user.latitude;
       user.longitude = long || user.longitude;
-     
+
       await user.save();
 
       res.status(200).json({ message: 'Current location updated successfully' });
