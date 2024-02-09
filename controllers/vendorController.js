@@ -1,4 +1,7 @@
 const vendorModel = require('../models/vendorModel');
+const assetsModel = require('../models/assetsModel');
+const licenceModel = require('../models/licenceModel');
+
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 

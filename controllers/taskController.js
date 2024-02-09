@@ -183,53 +183,38 @@ module.exports = {
         }
 
 
+        const task = await taskModel.findById(taskID);
+
+        if (!task) {
+          return res.status(400).json({ error: 'Task id not found' });
+        }
+
+
         // Check if file was provided
         let uploadedFile = '';
 
-        if (!req.file) {
+        if (req.file) {
 
-          uploadedFile = '';
-
-        } else {
-
-          //uploadedFile = process.env.BASE_URL + "/" + req.file.path.replace(/\\/g, "/");
           uploadedFile = "taskDoc/" + req.file.filename;
-
         }
-
-
 
         const currentDate = new Date();
 
-        const newTask = {
-          clientId,
-          clientName,
-          taskName,
-          userId,
-          taskDate,
-          address,
-          created: currentDate,
-          taskDocument: uploadedFile,
-          location: {
-            type: 'Point',
-            coordinates: [parseFloat(lat), parseFloat(long)],
-          },
-        };
+        task.clientId = clientId || task.clientId;
+        task.clientName = clientName || task.clientName;
+        task.taskName = taskName || task.taskName;
+        task.userId = userId || task.userId;
+        task.taskDate = taskDate || task.taskDate;
+        task.address = address || task.address;
+        task.created = currentDate || task.created;
+        task.taskDocument = uploadedFile || task.taskDocument;
 
-        const result = await taskModel.updateOne({ _id: taskID }, newTask);
+        task.location.coordinates[0] = lat || task.location.coordinates[0];
+        task.location.coordinates[1] = long || task.location.coordinates[1];
 
-        if (result.matchedCount === 1) {
+        await task.save();
 
-          console.log('Task updated successfully');
-          res.status(200).json({ message: 'Task updated successfully' });
-
-
-        } else {
-
-          console.log('Task not found');
-          res.status(500).json({ message: 'Task not found' });
-
-        }
+        res.status(200).json({ message: 'Task updated successfully' });
 
       });
 
