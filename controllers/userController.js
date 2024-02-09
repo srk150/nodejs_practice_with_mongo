@@ -405,6 +405,33 @@ module.exports = {
   },
 
 
+  //delete Vendor
+  userDelete: async (req, res) => {
+
+    try {
+
+      const { userId } = req.params;
+
+      // Check if the task exists
+      const existingUser = await User.findById(userId);
+
+      if (!existingUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // Perform the deletion
+      await User.findByIdAndDelete(userId);
+
+      // Send a success response
+      res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+      console.error('Error for User Delete:', error);
+      res.status(500).json({ message: 'Internal Server Error', error });
+    }
+
+  },
+
+
 
 };
 //module.exports end

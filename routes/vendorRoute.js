@@ -6,5 +6,6 @@ router.post('/vendor-login', vendorController.vendorLogin);
 router.post('/verify-vendor', vendorController.verifyOTPVendor);
 router.get('/getVendor/:vendorId', vendorController.getVendorDetails);
 router.put('/update-vendor/:vendorId', vendorController.updateVendor);
+router.delete('/delete/:vendorId', vendorController.vendorDelete);
 
 module.exports = router;

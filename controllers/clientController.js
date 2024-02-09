@@ -164,7 +164,7 @@ module.exports = {
     },
 
 
-    //For clientDetails update
+    //For updateClient update
     updateClient: async (req, res) => {
 
         try {

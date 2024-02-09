@@ -3,12 +3,10 @@ const mongoose = require('mongoose');
 // Define the user schema
 const userSchema = new mongoose.Schema({
 
-
   fullname: {
     type: String,
 
   },
-
 
   mobile: {
     type: String,
@@ -17,29 +15,10 @@ const userSchema = new mongoose.Schema({
   },
 
 
-  userType: {
-    type: String,
-    required: true,
-
-  },
-
-  machineNumber: {
-    type: String,
-    required: true,
-
-  },
-
-  workLocation: {
-    type: String,
-    required: true,
-
-  },
-
   otp: {
     type: String,
     default: 'null',
   },
-
 
   latitude: {
     type: String,
@@ -50,7 +29,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-
 
   status: {
     type: String,

@@ -177,6 +177,32 @@ module.exports = {
     },
 
 
+    //delete Vendor
+    vendorDelete: async (req, res) => {
+
+        try {
+
+            const { vendorId } = req.params;
+
+            // Check if the task exists
+            const existingvendor = await vendorModel.findById(vendorId);
+
+            if (!existingvendor) {
+                return res.status(404).json({ message: 'Vendor not found' });
+            }
+
+            // Perform the deletion
+            await vendorModel.findByIdAndDelete(vendorId);
+
+            // Send a success response
+            res.status(200).json({ message: 'Vendor deleted successfully' });
+        } catch (error) {
+            console.error('Error for Vendor Delete:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        }
+
+    },
+
 
 };
 //module.exports end

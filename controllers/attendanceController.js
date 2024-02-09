@@ -116,34 +116,33 @@ module.exports = {
   },
 
 
- 
+
   //get distance and duration 
   getDuration: async (req, res) => {
 
-    const apiKey = 'AIzaSyDYeQEY_frv3y8RV-y0mGfXY8EmLeZWorI';
-
+    const apiKey = process.env.GMAPAPI;
     const origin = req.body.origin;
     const destination = req.body.destination;
 
-  try {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`
-    );
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin}&destinations=${destination}&key=${apiKey}`
+      );
 
-    // console.log(response);
+      // console.log(response);
 
-    const distance = response.data.rows[0].elements[0].distance.text;
-    const duration = response.data.rows[0].elements[0].duration.text;
+      const distance = response.data.rows[0].elements[0].distance.text;
+      const duration = response.data.rows[0].elements[0].duration.text;
 
-    res.json({ distance, duration });
-  } catch (error) {
-    console.error('Error:', error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-  
-    
+      res.json({ distance, duration });
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+
+
   },
- 
+
 };
 //module.exports end
 
