@@ -115,7 +115,7 @@ module.exports = {
                 });
 
 
-                res.status(200).json({ message: 'OTP verification successful', token });
+                res.status(200).json({ message: 'OTP verification successful', vendor:storedOTP });
             } else {
                 res.status(400).json({ message: 'Invalid OTP' });
             }

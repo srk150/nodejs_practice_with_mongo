@@ -223,7 +223,7 @@ module.exports = {
                 });
 
 
-                res.status(200).json({ message: 'OTP verification successful', token });
+                res.status(200).json({ message: 'OTP verification successful', employee:storedOTP });
             } else {
                 res.status(400).json({ message: 'Invalid OTP' });
             }
