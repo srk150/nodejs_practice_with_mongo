@@ -101,7 +101,7 @@ module.exports = {
       const { userId } = req.params;
 
       // Find the user by ID
-      const attendance = await attendanceModel.findOne({ userId: userId });
+      const attendance = await attendanceModel.find({ userId: userId });
 
       if (!attendance) {
         return res.status(404).json({ error: 'Not Found', message: 'Attendance record not found for the given user ID' });

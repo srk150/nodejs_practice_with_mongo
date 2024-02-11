@@ -273,7 +273,7 @@ module.exports = {
 
 
       const updateTask = {
-        status: "Done",
+        status: 1,
 
       };
 

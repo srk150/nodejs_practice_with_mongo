@@ -247,11 +247,12 @@ module.exports = {
             }
 
             const attendance = await attendanceModel.find({ userId });
-            const tasks = await taskModel.find({ userId });
+            const tasks = await taskModel.find({ userId, status: 1 });
+
             const taskCount = tasks.length; // Count of tasks
 
 
-            //get distance lat long start
+            //get distance lat long start 
             var distance;
             var duration;
 
@@ -328,6 +329,37 @@ module.exports = {
         }
 
     },
+
+
+    
+  //CurrentLocation
+  currentLocation: async (req, res) => {
+    try {
+      const { userId, lat, long } = req.body;
+
+      if (!userId || !lat || !long) {
+        return res.status(400).json({ error: 'One or more fields are empty' });
+      }
+
+      const employee = await employeeModel.findById(userId, '-otp');
+      if (!employee) {
+        return res.status(404).json({ error: 'Employee not found' });
+      }
+
+      employee.latitude = lat || employee.latitude;
+      employee.longitude = long || employee.longitude;
+
+      await employee.save();
+
+      res.status(200).json({ message: 'Current location updated successfully' });
+
+    } catch (error) {
+      console.error('Error fetching employee current location', error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  },
+
+
 
 };
 //module.exports end

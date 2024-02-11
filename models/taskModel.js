@@ -61,8 +61,8 @@ const taskSchema = new mongoose.Schema({
 
   status: {
     type: String,
-    enum: ['Done', 'Not Done'],
-    default: 'Not Done',
+    enum: ['1', '0'],
+    default: '0',
   },
 }, { versionKey: false });
 
