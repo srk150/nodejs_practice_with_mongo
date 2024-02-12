@@ -11,5 +11,7 @@ router.post('/verify', employeeController.verifyOTP);
 router.get('/trackEmployee/:userId', employeeController.getEmpTrack);
 router.delete('/delete/:userId', employeeController.empDelete);
 router.post('/current-location', employeeController.currentLocation);
+router.get('/clientlist/:userId', employeeController.clientList);
+router.get('/taskList/:userId', employeeController.taskList);
 
 module.exports = router;

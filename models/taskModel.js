@@ -42,7 +42,29 @@ const taskSchema = new mongoose.Schema({
     required: true,
   },
 
+  createdBy: {
+    type: String,
+    default: '',
+  },
+
+  type: {
+    type: String,
+    default: '',
+
+  },
+
   taskDocument: {
+    type: String,
+    default: '',
+  },
+
+  documentNotes: {
+    type: String,
+    default: '',
+  },
+
+
+  taskNotes: {
     type: String,
     default: '',
   },

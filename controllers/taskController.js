@@ -1,5 +1,7 @@
 const taskModel = require('../models/taskModel');
 const userService = require('../services/userService');
+const employeeModel = require('../models/employeeModel');
+const vendorModel = require('../models/vendorModel');
 
 const axios = require('axios');
 const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
@@ -45,14 +47,13 @@ module.exports = {
           res.status(500).json({ error: "An unknown error occurred during file upload." });
         }
 
-        const { userId, clientId, clientName, taskName, taskDate, address, lat, long, vendorId } = req.body;
+        const { userId, clientId, clientName, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
 
 
         // Check if any of the properties is empty or falsy
-        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long || !vendorId) {
+        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long || !vendorId || !type) {
           return res.status(400).json({ error: 'One or more fields are empty' });
         }
-
 
         // Check if file was provided
         let uploadedFile = '';
@@ -68,6 +69,23 @@ module.exports = {
 
         }
 
+
+        // check sendor admin or employee
+        let createdBy = '';
+
+        if (type === 'vendor') {
+
+          const vendorExisting = await vendorModel.findOne({ _id: vendorId });
+
+          createdBy = vendorExisting.vendorName;
+
+        } else if (type === 'employee') {
+
+          const vendorExisting = await employeeModel.findOne({ _id: vendorId });
+          createdBy = vendorExisting.fullname;
+
+        }
+
         const currentDate = new Date();
         const newTask = new taskModel({
           userId,
@@ -76,6 +94,8 @@ module.exports = {
           taskName,
           taskDate,
           address,
+          type,
+          createdBy,
           created: currentDate,
           taskDocument: uploadedFile,
           vendorId: vendorId,
@@ -100,7 +120,7 @@ module.exports = {
 
 
 
-  //For attendance out api
+  //For tasklist for admin api
   taskList: async (req, res) => {
 
     try {
@@ -108,7 +128,14 @@ module.exports = {
       const { vendorId } = req.params;
 
 
-      const taskList = await taskModel.find({ vendorId: vendorId });
+      // const taskList = await taskModel.find({ vendorId: vendorId });
+      // Fetching employees with the given vendorId
+      const employees = await employeeModel.find({ vendorId: vendorId });
+      const employeeIds = employees.map(employee => employee._id);
+      const taskList = await taskModel.find({
+        vendorId: { $in: [vendorId, ...employeeIds] }
+      });
+
 
       if (!taskList || taskList.length === 0) { // Check if Task array is empty
         return res.status(404).json({ message: 'Task not found' });
@@ -257,43 +284,49 @@ module.exports = {
 
     try {
 
-      const { taskId } = req.params;
+      upload(req, res, async function (err) {
 
-      // Check if the task exists
-      const existingTask = await taskModel.findById(taskId);
+        if (err instanceof multer.MulterError) {
+          res.status(500).json({ error: "An error occurred during file upload." });
+        } else if (err) {
+          res.status(500).json({ error: "An unknown error occurred during file upload." });
+        }
 
-      if (!taskId) {
-        return res.status(400).json({ error: 'Task id is empty' });
-      }
-
-      if (!existingTask) {
-        return res.status(404).json({ message: 'Task not found' });
-      }
+        const { taskID, notes } = req.body;
 
 
-
-      const updateTask = {
-        status: 1,
-
-      };
-
-      const result = await taskModel.updateOne({ _id: taskId }, updateTask);
-
-      if (result.matchedCount === 1) {
-
-        console.log('Task done successfully');
-        res.status(200).json({ message: 'Task done successfully' });
+        // Check if any of the properties is empty or falsy
+        if (!taskID) {
+          return res.status(400).json({ error: 'TaskID is empty' });
+        }
 
 
-      } else {
+        const task = await taskModel.findById(taskID);
 
-        console.log('Task not found');
-        res.status(500).json({ message: 'Task not found' });
+        if (!task) {
+          return res.status(400).json({ error: 'Task is not found' });
+        }
 
-      }
+
+        // Check if file was provided
+        let uploadedFile = '';
+
+        if (req.file) {
+
+          uploadedFile = "taskDoc/" + req.file.filename;
+        }
+
+        task.status = 1 || task.status;
+        task.taskNotes = notes || task.taskNotes;
+        task.documentNotes = uploadedFile || task.documentNotes;
+        await task.save();
+
+        res.status(200).json({ message: 'Task Done Successfully' });
+
+      });
 
     } catch (error) {
-      console.error('Error in updating task:', error);
+      console.error('Error in updating task status:', error);
       res.status(500).json({ message: 'Internal Server Error', error });
     }
 

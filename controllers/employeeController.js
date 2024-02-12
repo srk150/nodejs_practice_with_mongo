@@ -1,6 +1,7 @@
 const employeeModel = require('../models/employeeModel');
 const attendanceModel = require('../models/attendanceModel');
 const taskModel = require('../models/taskModel');
+const clientModel = require('../models/clientModel');
 
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
@@ -223,7 +224,7 @@ module.exports = {
                 });
 
 
-                res.status(200).json({ message: 'OTP verification successful', employee:storedOTP });
+                res.status(200).json({ message: 'OTP verification successful', employee: storedOTP });
             } else {
                 res.status(400).json({ message: 'Invalid OTP' });
             }
@@ -246,7 +247,8 @@ module.exports = {
                 return res.status(404).json({ error: 'Employee not found' });
             }
 
-            const attendance = await attendanceModel.find({ userId });
+            const attendance = await attendanceModel.find({ userId: userId }).sort({ attnedanceDate: 1 });
+
             const tasks = await taskModel.find({ userId, status: 1 });
 
             const taskCount = tasks.length; // Count of tasks
@@ -256,15 +258,16 @@ module.exports = {
             var distance;
             var duration;
 
-            // console.log(attendance.length);
+            const getCheckInOrigin = await attendanceModel.find({ userId: userId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
+            const getCheckOutOrigin = await attendanceModel.find({ userId: userId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
 
-            if (attendance.length > 0 && attendance[0]['locationOut']['coordinates'][0]) {
+            if (attendance.length > 0 && tasks.length == 0) {
 
-                const originLat = attendance[0]['locationIn']['coordinates'][0];
-                const originLong = attendance[0]['locationIn']['coordinates'][1];
+                const originLat = getCheckInOrigin[0].attnedanceLat;
+                const originLong = getCheckInOrigin[0].attnedanceLong;
 
-                const destinationLat = attendance[0]['locationOut']['coordinates'][0];
-                const destinationLong = attendance[0]['locationOut']['coordinates'][1];
+                const destinationLat = getCheckOutOrigin[0].attnedanceLat;
+                const destinationLong = getCheckOutOrigin[0].attnedanceLong;
 
                 const locationInLatLong = originLat + ',' + originLong;
                 const locationOutLatLong = destinationLat + ',' + destinationLong;
@@ -331,41 +334,79 @@ module.exports = {
     },
 
 
-    
-  //CurrentLocation
-  currentLocation: async (req, res) => {
-    try {
-      const { userId, lat, long } = req.body;
 
-      if (!userId || !lat || !long) {
-        return res.status(400).json({ error: 'One or more fields are empty' });
-      }
+    //CurrentLocation
+    currentLocation: async (req, res) => {
+        try {
+            const { userId, lat, long } = req.body;
 
-      const employee = await employeeModel.findById(userId, '-otp');
-      if (!employee) {
-        return res.status(404).json({ error: 'Employee not found' });
-      }
+            if (!userId || !lat || !long) {
+                return res.status(400).json({ error: 'One or more fields are empty' });
+            }
 
-      employee.latitude = lat || employee.latitude;
-      employee.longitude = long || employee.longitude;
+            const employee = await employeeModel.findById(userId, '-otp');
+            if (!employee) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
 
-      await employee.save();
+            employee.latitude = lat || employee.latitude;
+            employee.longitude = long || employee.longitude;
 
-      res.status(200).json({ message: 'Current location updated successfully' });
+            await employee.save();
 
-    } catch (error) {
-      console.error('Error fetching employee current location', error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  },
+            res.status(200).json({ message: 'Current location updated successfully' });
+
+        } catch (error) {
+            console.error('Error fetching employee current location', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+    //cleint list for employee
+    clientList: async (req, res) => {
+
+        try {
+
+            const { userId } = req.params;
+
+            const clientList = await clientModel.find({ vendorId: userId });
+
+            // Check if clientList array is empty
+            if (!clientList || clientList.length === 0) {
+                return res.status(404).json({ message: 'client List not found' });
+            }
+
+            res.status(200).json(clientList);
+
+        } catch (error) {
+            console.error('Error fetching client:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        }
+
+    },
+
+    //task list for employee
+    taskList: async (req, res) => {
+
+        try {
+
+            const { userId } = req.params;
+            const taskList = await taskModel.find({ vendorId: userId });
+
+            if (!taskList || taskList.length === 0) { // Check if Task array is empty
+                return res.status(404).json({ message: 'Task not found' });
+            }
+
+            res.status(200).json(taskList);
+
+        } catch (error) {
+            console.error('Error fetching all users:', error);
+            res.status(500).json({ message: 'Internal Server Error', error });
+        }
+
+    },
 
 
 
 };
 //module.exports end
-
-
-
-
-
-

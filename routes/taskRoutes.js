@@ -8,7 +8,7 @@ router.get('/list/:vendorId', taskController.taskList);
 router.get('/edit/:taskID', taskController.taskEdit);
 router.post('/update', taskController.taskUpdate);
 router.delete('/delete/:taskId', taskController.taskDelete);
-router.get('/done/:taskId', taskController.taskDone);
+router.post('/done', taskController.taskDone);
 router.post('/getDistance', taskController.CheckDistanceAndDuration);
 
 module.exports = router;

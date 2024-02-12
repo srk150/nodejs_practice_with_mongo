@@ -7,37 +7,25 @@ const attendanceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  inDate: {
-    type: Date,
+
+  type: {
+    type: String,
     required: true,
   },
 
-  outDate: {
-    type: Date,
-    default: 'Null',
-
+  attnedanceDate: {
+    type: String,
+    required: true,
   },
 
-  locationIn: {
-    type: {
-      type: String,
-      enum: ['Point'],
-      required: true,
-    },
-    coordinates: {
-      type: [Number],
-      required: true,
-    },
+  attnedanceLat: {
+    type: String,
+    required: true,
   },
 
-  locationOut: {
-    type: {
-      type: String,
-      enum: ['Point'],
-    },
-    coordinates: {
-      type: [Number],
-    },
+  attnedanceLong: {
+    type: String,
+    required: true,
   },
 
   status: {

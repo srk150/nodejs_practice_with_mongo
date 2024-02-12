@@ -1,4 +1,7 @@
 const clientModel = require('../models/clientModel');
+const employeeModel = require('../models/employeeModel');
+const vendorModel = require('../models/vendorModel');
+
 const userService = require('../services/userService');
 
 const multer = require('multer');
@@ -20,8 +23,8 @@ const upload = multer({ storage }).single("clientDocument");
 
 
 module.exports = {
-    //For attendance in api
 
+    //For create api using vendor
     createClient: async (req, res) => {
 
         try {
@@ -40,9 +43,9 @@ module.exports = {
                     res.status(500).json({ error: "An unknown error occurred during file upload." });
                 }
 
-                const { clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long, vendorId } = req.body;
+                const { clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long, vendorId, type } = req.body;
 
-                if (!clientFullName || !clientEmail || !clientMobile || !clientCompany || !clientAddress || !clientCity || !clientState || !clientCountry || !clientZip || !lat || !long || !vendorId) {
+                if (!clientFullName || !clientEmail || !clientMobile || !clientCompany || !clientAddress || !clientCity || !clientState || !clientCountry || !clientZip || !lat || !long || !vendorId || !type) {
                     return res.status(400).json({ error: 'One or more fields are empty' });
                 }
 
@@ -63,6 +66,20 @@ module.exports = {
 
                 const existingEmail = await clientModel.findOne({ clientEmail });
                 const existingMobile = await clientModel.findOne({ clientMobile });
+
+                let createdBy = '';
+                if (type == 'vendor') {
+
+                    const existingvendor = await vendorModel.findOne({ _id: vendorId });
+
+                    createdBy = existingvendor.vendorName;
+
+                } else if (type == 'employee') {
+
+                    const existingvendor = await employeeModel.findOne({ _id: vendorId });
+                    createdBy = existingvendor.fullname;
+
+                }
 
                 if (!await userService.isValidEmail(clientEmail)) {
                     return res.status(400).json({ message: 'Invalid email address' });
@@ -93,6 +110,8 @@ module.exports = {
                     clientCountry,
                     clientZip,
                     vendorId,
+                    createdBy,
+                    type,
                     clientLocation: {
                         type: 'Point',
                         coordinates: [parseFloat(lat), parseFloat(long)],
@@ -118,15 +137,22 @@ module.exports = {
 
 
 
-    //For attendance out api
+    //For clientList api for admin
     clientList: async (req, res) => {
 
         try {
 
             const { vendorId } = req.params;
-            const clientList = await clientModel.find({ vendorId: vendorId });
 
-            if (!clientList || clientList.length === 0) { // Check if clientList array is empty
+            // Fetching employees with the given vendorId
+            const employees = await employeeModel.find({ vendorId: vendorId });
+            const employeeIds = employees.map(employee => employee._id);
+            const clientList = await clientModel.find({
+                vendorId: { $in: [vendorId, ...employeeIds] }
+            });
+
+            // Check if clientList array is empty
+            if (!clientList || clientList.length === 0) {
                 return res.status(404).json({ message: 'clientList not found' });
             }
 

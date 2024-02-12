@@ -7,6 +7,7 @@ const clientSchema = new mongoose.Schema({
         type: String,
 
     },
+
     clientFullName: {
         type: String,
         required: true,
@@ -56,6 +57,16 @@ const clientSchema = new mongoose.Schema({
         default: '',
     },
 
+    createdBy: {
+        type: String,
+        default: '',
+    },
+
+    type: {
+        type: String,
+        default: '',
+
+    },
 
     created: {
         type: Date,
