@@ -8,4 +8,7 @@ router.get('/getVendor/:vendorId', vendorController.getVendorDetails);
 router.put('/update-vendor/:vendorId', vendorController.updateVendor);
 router.delete('/delete/:vendorId', vendorController.vendorDelete);
 
+router.get('/trackVendor/:vendorId', vendorController.getTrackVendor);
+
+
 module.exports = router;

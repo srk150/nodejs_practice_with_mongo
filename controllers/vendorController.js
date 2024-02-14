@@ -2,6 +2,11 @@ const vendorModel = require('../models/vendorModel');
 const assetsModel = require('../models/assetsModel');
 const licenceModel = require('../models/licenceModel');
 
+const employeeModel = require('../models/employeeModel');
+const attendanceModel = require('../models/attendanceModel');
+const taskModel = require('../models/taskModel');
+
+
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 
@@ -115,7 +120,7 @@ module.exports = {
                 });
 
 
-                res.status(200).json({ message: 'OTP verification successful', vendor:storedOTP });
+                res.status(200).json({ message: 'OTP verification successful', vendor: storedOTP });
             } else {
                 res.status(400).json({ message: 'Invalid OTP' });
             }
@@ -204,6 +209,78 @@ module.exports = {
             res.status(500).json({ message: 'Internal Server Error', error });
         }
 
+    },
+
+
+    //Vendor Tracking Data
+    getTrackVendor: async (req, res) => {
+        try {
+
+            const vendorId = req.params.vendorId;
+
+            const vendor = await vendorModel.findById(vendorId, '-vandorOtp');
+            if (!vendor) {
+                return res.status(404).json({ error: 'Vendor not found' });
+            }
+
+            const attendance = await attendanceModel.find({ userId: vendorId }).sort({ attnedanceDate: 1 });
+
+            const tasks = await taskModel.find({ userId: vendorId, status: 1 });
+
+            const taskCount = tasks.length; // Count of tasks
+
+
+            //get distance lat long start 
+            var distance;
+            var duration;
+
+            const getCheckInOrigin = await attendanceModel.find({ userId: vendorId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
+            const getCheckOutOrigin = await attendanceModel.find({ userId: vendorId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
+
+            if (attendance.length > 0 && tasks.length == 0) {
+
+                const originLat = getCheckInOrigin[0].attnedanceLat;
+                const originLong = getCheckInOrigin[0].attnedanceLong;
+
+                const destinationLat = getCheckOutOrigin[0].attnedanceLat;
+                const destinationLong = getCheckOutOrigin[0].attnedanceLong;
+
+                const locationInLatLong = originLat + ',' + originLong;
+                const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                const originCoords = await userService.parseCoordinates(locationInLatLong);
+                const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                distance = result.data.rows[0].elements[0].distance.text;
+                duration = result.data.rows[0].elements[0].duration.text;
+
+            } else {
+
+                distance = 0;
+                duration = 0;
+            }
+            //end loc
+
+            const response = {
+                vendor: vendor,
+                employeeAttendance: attendance,
+                employeeTasks: tasks,
+                origin: {
+                    distance: distance,
+                    duration: duration,
+                    taskCount: taskCount
+                }
+            };
+
+            res.status(200).json(response);
+
+
+        } catch (error) {
+            console.error('Error fetching employee--tracking-related data:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
     },
 
 
