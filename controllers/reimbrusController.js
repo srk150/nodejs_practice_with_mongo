@@ -1,5 +1,6 @@
 const reimbrushmentModel = require('../models/reimbrushmentModel');
-const userService = require('../services/userService');
+const employeeModel = require('../models/employeeModel');
+const vendorModel = require('../models/vendorModel');
 
 const multer = require('multer');
 const path = require('path');
@@ -34,11 +35,11 @@ module.exports = {
                     res.status(500).json({ error: "An unknown error occurred during file upload." });
                 }
 
-                const { vendorId, reimbDate, reimbType, notes, amount } = req.body;
+                const { vendorId, reimbDate, reimbType, notes, amount, type } = req.body;
 
 
                 // Check if any of the properties is empty or false 
-                if (!vendorId || !reimbDate || !reimbType || !notes || !amount) {
+                if (!vendorId || !reimbDate || !reimbType || !notes || !amount || !type) {
                     return res.status(400).json({ error: 'One or more fields are empty' });
                 }
 
@@ -57,6 +58,24 @@ module.exports = {
 
                 }
 
+
+                // check sendor admin or employee
+                let createdBy = '';
+
+                if (type === 'vendor') {
+
+                    const vendorExisting = await vendorModel.findOne({ _id: vendorId });
+
+                    createdBy = vendorExisting.vendorName;
+
+                } else if (type === 'employee') {
+
+                    const vendorExisting = await employeeModel.findOne({ _id: vendorId });
+                    createdBy = vendorExisting.fullname;
+
+                }
+
+
                 const currentDate = new Date();
                 const newReimb = new reimbrushmentModel({
                     vendorId,
@@ -64,6 +83,8 @@ module.exports = {
                     reimbType,
                     notes,
                     amount,
+                    type,
+                    createdBy,
                     createdAt: currentDate,
                     reimbrushmentDocument: uploadedFile,
 
@@ -92,7 +113,14 @@ module.exports = {
             const { vendorId } = req.params;
 
 
-            const reimbrushment = await reimbrushmentModel.find({ vendorId: vendorId });
+            //getlist admin and emp both
+            const employees = await employeeModel.find({ vendorId: vendorId });
+            const employeeIds = employees.map(employee => employee._id);
+
+            const reimbrushment = await reimbrushmentModel.find({
+                vendorId: { $in: [vendorId, ...employeeIds] }
+            });
+
 
             if (!reimbrushment || reimbrushment.length === 0) { // Check if reimbrushment array is empty
                 return res.status(404).json({ message: 'Reimbrushment not found' });
@@ -182,7 +210,7 @@ module.exports = {
                 reimbrushment.reimbrushmentDocument = uploadedFile || reimbrushment.reimbrushmentDocument;
 
                 await reimbrushment.save();
-                res.status(200).json({ message: 'Reimbrushment successfully' });
+                res.status(200).json({ message: 'Reimbrushment successfully updated' });
 
             });
 

@@ -42,6 +42,18 @@ const reimbrushSchema = new mongoose.Schema({
         required: true,
     },
 
+    type: {
+        type: String,
+        default: '',
+
+    },
+
+    createdBy: {
+        type: String,
+        default: '',
+
+    },
+
     status: {
         type: String,
         enum: ['1', '0'],
