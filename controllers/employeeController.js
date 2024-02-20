@@ -6,6 +6,8 @@ const clientModel = require('../models/clientModel');
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 
+const moment = require('moment');
+
 module.exports = {
     //For create employee api
     createEmp: async (req, res) => {
@@ -237,6 +239,115 @@ module.exports = {
 
 
     //Employee Tracking Data
+    // getEmpTrack: async (req, res) => {
+    //     try {
+
+    //         const userId = req.params.userId;
+
+    //         const employee = await employeeModel.findById(userId, '-otp');
+    //         if (!employee) {
+    //             return res.status(404).json({ error: 'Employee not found' });
+    //         }
+
+    //         const attendance = await attendanceModel.find({ userId: userId }).sort({ attnedanceDate: 1 });
+
+    //         const tasks = await taskModel.find({ userId, status: 1 });
+
+    //         const taskCount = tasks.length; // Count of tasks
+
+
+    //         //get distance lat long start 
+    //         var distance;
+    //         var duration;
+
+    //         const getCheckInOrigin = await attendanceModel.find({ userId: userId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
+    //         const getCheckOutOrigin = await attendanceModel.find({ userId: userId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
+
+    //         const checkInRecord = attendance.find(record => record.status === "IN");
+    //         const checkOutRecord = attendance.find(record => record.status === "OUT");
+
+
+    //         if (checkInRecord && checkOutRecord && tasks.length == 0) {
+
+    //             const originLat = getCheckInOrigin[0].attnedanceLat;
+    //             const originLong = getCheckInOrigin[0].attnedanceLong;
+
+    //             const destinationLat = getCheckOutOrigin[0].attnedanceLat;
+    //             const destinationLong = getCheckOutOrigin[0].attnedanceLong;
+
+    //             const locationInLatLong = originLat + ',' + originLong;
+    //             const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+    //             const originCoords = await userService.parseCoordinates(locationInLatLong);
+    //             const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+    //             const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+    //             distance = result.data.rows[0].elements[0].distance.text;
+    //             duration = result.data.rows[0].elements[0].duration.text;
+
+    //         } else {
+
+    //             let startTaskLat, startTaskLong, endTaskLat, endTaskLong;
+    //             for (let i = 0; i < tasks.length; i++) {
+    //                 const task = tasks[i];
+    //                 const taskLocation = task.location;
+
+    //                 if (i === 0) {
+    //                     // Save the start task coordinates
+    //                     startTaskLat = taskLocation.coordinates[0];
+    //                     startTaskLong = taskLocation.coordinates[1];
+    //                 } else if (i === tasks.length - 1) {
+    //                     // Save the end task coordinates
+    //                     endTaskLat = taskLocation.coordinates[0];
+    //                     endTaskLong = taskLocation.coordinates[1];
+    //                 }
+
+    //                 const originLat = (i === 0) ? checkInRecord.attnedanceLat : tasks[i - 1].location.coordinates[0];
+    //                 const originLong = (i === 0) ? checkInRecord.attnedanceLong : tasks[i - 1].location.coordinates[1];
+    //                 const destinationLat = taskLocation.coordinates[0];
+    //                 const destinationLong = taskLocation.coordinates[1];
+
+    //                 const locationInLatLong = originLat + ',' + originLong;
+    //                 const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+    //                 const originCoords = await userService.parseCoordinates(locationInLatLong);
+    //                 const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+    //                 const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+    //                 totalDistance += parseFloat(result.data.rows[0].elements[0].distance.text);
+    //                 totalDuration += parseFloat(result.data.rows[0].elements[0].duration.text);
+    //             }
+
+
+    //             distance = 0;
+    //             duration = 0;
+    //         }
+    //         //end loc
+
+    //         const response = {
+    //             employee: employee,
+    //             employeeAttendance: attendance,
+    //             employeeTasks: tasks,
+    //             origin: {
+    //                 distance: distance,
+    //                 duration: duration,
+    //                 taskCount: taskCount
+    //             }
+    //         };
+
+    //         res.status(200).json(response);
+
+
+    //     } catch (error) {
+    //         console.error('Error fetching employee--tracking-related data:', error);
+    //         res.status(500).json({ message: 'Internal Server Error' });
+    //     }
+    // },
+
+
+
     getEmpTrack: async (req, res) => {
         try {
 
@@ -248,26 +359,58 @@ module.exports = {
             }
 
             const attendance = await attendanceModel.find({ userId: userId }).sort({ attnedanceDate: 1 });
-
             const tasks = await taskModel.find({ userId, status: 1 });
-
             const taskCount = tasks.length; // Count of tasks
 
 
             //get distance lat long start 
-            var distance;
-            var duration;
+            let totalDistance = 0;
+            let totalDuration = 0;
 
             const getCheckInOrigin = await attendanceModel.find({ userId: userId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
             const getCheckOutOrigin = await attendanceModel.find({ userId: userId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
 
-            if (attendance.length > 0 && tasks.length == 0) {
+            const checkInRecord = attendance.find(record => record.status === "IN");
+            const checkOutRecord = attendance.find(record => record.status === "OUT");
 
-                const originLat = getCheckInOrigin[0].attnedanceLat;
-                const originLong = getCheckInOrigin[0].attnedanceLong;
 
-                const destinationLat = getCheckOutOrigin[0].attnedanceLat;
-                const destinationLong = getCheckOutOrigin[0].attnedanceLong;
+            // Calculate distance and duration for single task
+
+            if (checkInRecord && tasks.length == 0) {
+
+                if (checkOutRecord) {
+                    const originLat = getCheckInOrigin[0].attnedanceLat;
+                    const originLong = getCheckInOrigin[0].attnedanceLong;
+
+                    const destinationLat = getCheckOutOrigin[0].attnedanceLat;
+                    const destinationLong = getCheckOutOrigin[0].attnedanceLong;
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance = result.data.rows[0].elements[0].distance.text;
+                    totalDuration = result.data.rows[0].elements[0].duration.text;
+                } else {
+                    totalDistance = 0;
+                    totalDuration = 0;
+
+                }
+
+            } else if (checkInRecord && tasks.length === 1) {
+
+                const taskLocation = tasks[0].location;
+
+                // console.log(taskLocation.coordinates[0]);
+
+                const originLat = checkInRecord.attnedanceLat;
+                const originLong = checkInRecord.attnedanceLong;
+                const destinationLat = taskLocation.coordinates[0];
+                const destinationLong = taskLocation.coordinates[1];
 
                 const locationInLatLong = originLat + ',' + originLong;
                 const locationOutLatLong = destinationLat + ',' + destinationLong;
@@ -277,14 +420,81 @@ module.exports = {
 
                 const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
 
-                distance = result.data.rows[0].elements[0].distance.text;
-                duration = result.data.rows[0].elements[0].duration.text;
+                totalDistance = parseFloat(result.data.rows[0].elements[0].distance.text);
+                totalDuration = parseFloat(result.data.rows[0].elements[0].duration.text);
 
+                // If there's a check-out record, calculate distance and duration from task to check-out
+                if (checkOutRecord) {
+                    const originLat = taskLocation.coordinates[0];
+                    const originLong = taskLocation.coordinates[1];
+                    const destinationLat = checkOutRecord.attnedanceLat;
+                    const destinationLong = checkOutRecord.attnedanceLong;
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance += parseFloat(result.data.rows[0].elements[0].distance.text);
+                    totalDuration += parseFloat(result.data.rows[0].elements[0].duration.text);
+                }
             } else {
+                // Calculate distance and duration for each task
+                let startTaskLat, startTaskLong, endTaskLat, endTaskLong;
+                for (let i = 0; i < tasks.length; i++) {
+                    const task = tasks[i];
+                    const taskLocation = task.location;
 
-                distance = 0;
-                duration = 0;
+                    if (i === 0) {
+                        // Save the start task coordinates
+                        startTaskLat = taskLocation.coordinates[0];
+                        startTaskLong = taskLocation.coordinates[1];
+                    } else if (i === tasks.length - 1) {
+                        // Save the end task coordinates
+                        endTaskLat = taskLocation.coordinates[0];
+                        endTaskLong = taskLocation.coordinates[1];
+                    }
+
+                    const originLat = (i === 0) ? checkInRecord.attnedanceLat : tasks[i - 1].location.coordinates[0];
+                    const originLong = (i === 0) ? checkInRecord.attnedanceLong : tasks[i - 1].location.coordinates[1];
+                    const destinationLat = taskLocation.coordinates[0];
+                    const destinationLong = taskLocation.coordinates[1];
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance += parseFloat(result.data.rows[0].elements[0].distance.text);
+                    totalDuration += parseFloat(result.data.rows[0].elements[0].duration.text);
+                }
+
+                // If there's a check-out record, calculate distance and duration from last task to check-out
+                if (checkOutRecord) {
+                    const originLat = endTaskLat;
+                    const originLong = endTaskLong;
+                    const destinationLat = checkOutRecord.attnedanceLat;
+                    const destinationLong = checkOutRecord.attnedanceLong;
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance += parseFloat(result.data.rows[0].elements[0].distance.text);
+                    totalDuration += parseFloat(result.data.rows[0].elements[0].duration.text);
+                }
             }
+
             //end loc
 
             const response = {
@@ -292,8 +502,8 @@ module.exports = {
                 employeeAttendance: attendance,
                 employeeTasks: tasks,
                 origin: {
-                    distance: distance,
-                    duration: duration,
+                    distance: totalDistance,
+                    duration: totalDuration,
                     taskCount: taskCount
                 }
             };
@@ -306,6 +516,7 @@ module.exports = {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
+
 
     //delete employee
     empDelete: async (req, res) => {
@@ -391,6 +602,7 @@ module.exports = {
         try {
 
             const { userId } = req.params;
+            //find data from employee id 
             const taskList = await taskModel.find({ vendorId: userId });
 
             if (!taskList || taskList.length === 0) { // Check if Task array is empty

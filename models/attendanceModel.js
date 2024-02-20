@@ -28,6 +28,11 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
 
+  attnedanceAddress: {
+    type: String,
+    default: '',
+  },
+
   status: {
     type: String,
     enum: ['IN', 'OUT'],

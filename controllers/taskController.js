@@ -9,6 +9,12 @@ const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
 const multer = require('multer');
 const path = require('path');
 
+const moment = require('moment');
+const { exit } = require('process');
+
+
+const ObjectId = require('mongoose').Types.ObjectId;
+
 
 // Storage configuration for multer
 const storage = multer.diskStorage({
@@ -73,20 +79,28 @@ module.exports = {
         // check sendor admin or employee
         let createdBy = '';
 
-        if (type === 'vendor') {
+        if (type == "vendor") {
 
-          const vendorExisting = await vendorModel.findOne({ _id: vendorId });
+          const vendorExisting = await vendorModel.findById({ _id: vendorId });
 
           createdBy = vendorExisting.vendorName;
 
-        } else if (type === 'employee') {
+        } else {
 
-          const vendorExisting = await employeeModel.findOne({ _id: vendorId });
-          createdBy = vendorExisting.fullname;
+          const objectId = new ObjectId(vendorId);
+          const empExisting = await employeeModel.findOne({ _id: objectId });
+          if (empExisting) {
+
+            createdBy = empExisting.fullname;
+          }
 
         }
 
-        const currentDate = new Date();
+
+        const myDate = new Date();
+        const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+
+
         const newTask = new taskModel({
           userId,
           clientId,
@@ -174,6 +188,29 @@ module.exports = {
 
 
   },
+
+
+  //task Details By Employee id under working
+  taskListByEmp: async (req, res) => {
+
+    try {
+
+      const { empId } = req.params;
+
+      // Find the task by ID
+      const taskGet = await taskModel.find({ userId: empId });
+
+      if (!taskGet) {
+        return res.status(404).json({ message: 'Task not found' });
+      }
+      res.status(200).json(taskGet);
+
+    } catch (error) {
+      console.error('Error in task :', error);
+      res.status(500).json({ message: 'Internal Server Error', error });
+    }
+  },
+
   //task Update
   taskUpdate: async (req, res) => {
 
@@ -225,7 +262,8 @@ module.exports = {
           uploadedFile = "taskDoc/" + req.file.filename;
         }
 
-        const currentDate = new Date();
+        const myDate = new Date();
+        const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
 
         task.clientId = clientId || task.clientId;
         task.clientName = clientName || task.clientName;
@@ -292,12 +330,16 @@ module.exports = {
           res.status(500).json({ error: "An unknown error occurred during file upload." });
         }
 
-        const { taskID, notes } = req.body;
+        const { taskID, notes, lat, long } = req.body;
 
 
         // Check if any of the properties is empty or falsy
         if (!taskID) {
           return res.status(400).json({ error: 'TaskID is empty' });
+        }
+
+        if (!lat || !long) {
+          return res.status(400).json({ error: 'Lat and Long is empty' });
         }
 
 
@@ -316,9 +358,17 @@ module.exports = {
           uploadedFile = "taskDoc/" + req.file.filename;
         }
 
+        //get address from where task done
+        const locationGet = await userService.getLocation(lat, long);
+
+
         task.status = 1 || task.status;
         task.taskNotes = notes || task.taskNotes;
         task.documentNotes = uploadedFile || task.documentNotes;
+        task.taskAddress = locationGet || task.taskAddress;
+        task.location.coordinates[0] = lat || task.location.coordinates[0];
+        task.location.coordinates[1] = long || task.location.coordinates[1];
+
         await task.save();
 
         res.status(200).json({ message: 'Task Done Successfully' });

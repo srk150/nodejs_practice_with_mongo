@@ -1,4 +1,4 @@
-const validator   = require('validator');
+const validator = require('validator');
 const axios = require('axios');
 
 async function isValidEmail(email) {
@@ -54,7 +54,33 @@ async function calculateDistanceAndDuration(originCoords, destinationCoords) {
 }
 
 
-module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP, calculateDistanceAndDuration, parseCoordinates };
+async function getLocation(lat, long) {
+  const apiKey = process.env.GMAPAPI;
+
+  try {
+    const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+      params: {
+        latlng: `${lat},${long}`,
+        key: apiKey,
+      },
+    });
+
+    // Extract the formatted address from the response
+    const formattedAddress = response.data.results[0].formatted_address;
+
+    return formattedAddress;
+
+  } catch (error) {
+    console.error('Error fetching address:', error.message);
+    throw error; // Re-throw the error to be handled by the caller
+  }
+
+}
+
+
+
+
+module.exports = { isValidEmail, isValidMobile, isValidPassword, generateOTP, calculateDistanceAndDuration, parseCoordinates, getLocation };
 
 
 

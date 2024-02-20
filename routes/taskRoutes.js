@@ -10,5 +10,6 @@ router.post('/update', taskController.taskUpdate);
 router.delete('/delete/:taskId', taskController.taskDelete);
 router.post('/done', taskController.taskDone);
 router.post('/getDistance', taskController.CheckDistanceAndDuration);
+router.get('/get-task-empids/:empId', taskController.taskListByEmp);
 
 module.exports = router;

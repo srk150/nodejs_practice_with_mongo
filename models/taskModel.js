@@ -38,7 +38,7 @@ const taskSchema = new mongoose.Schema({
   },
 
   created: {
-    type: Date,
+    type: String,
     required: true,
   },
 
@@ -79,6 +79,11 @@ const taskSchema = new mongoose.Schema({
       type: [Number],
       required: true,
     },
+  },
+
+  taskAddress: {
+    type: String,
+    default: '',
   },
 
   status: {

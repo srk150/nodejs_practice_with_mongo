@@ -6,6 +6,7 @@ const userService = require('../services/userService');
 
 const multer = require('multer');
 const path = require('path');
+const moment = require('moment');
 
 // Storage configuration for multer
 const storage = multer.diskStorage({
@@ -97,7 +98,8 @@ module.exports = {
                 }
 
 
-                const currentDate = new Date();
+                const myDate = new Date();
+                const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
 
                 const newClient = new clientModel({
                     clientFullName,
@@ -264,7 +266,9 @@ module.exports = {
                 }
 
 
-                const currentDate = new Date();
+
+                const myDate = new Date();
+                const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
 
 
                 // Update profile fields

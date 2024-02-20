@@ -5,6 +5,7 @@ const vendorModel = require('../models/vendorModel');
 const multer = require('multer');
 const path = require('path');
 const axios = require('axios');
+const moment = require('moment');
 
 // Storage configuration for multer
 const storage = multer.diskStorage({
@@ -76,7 +77,10 @@ module.exports = {
                 }
 
 
-                const currentDate = new Date();
+
+                const myDate = new Date();
+                const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+
                 const newReimb = new reimbrushmentModel({
                     vendorId,
                     reimbDate,
@@ -199,8 +203,8 @@ module.exports = {
 
                 }
 
-                const currentDate = new Date();
-
+                const myDate = new Date();
+                const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
 
                 reimbrushment.reimbDate = reimbDate || reimbrushment.reimbDate;
                 reimbrushment.reimbType = reimbType || reimbrushment.reimbType;

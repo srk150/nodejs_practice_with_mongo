@@ -1,5 +1,7 @@
 const attendanceModel = require('../models/attendanceModel');
 const axios = require('axios');
+const moment = require('moment');
+const userService = require('../services/userService');
 
 module.exports = {
   //For attendance in api
@@ -14,9 +16,11 @@ module.exports = {
         return res.status(400).json({ error: 'One or more fields are empty' });
       }
 
-      const currentDate = new Date();
+      const myDate = new Date();
+      const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
 
-
+      const locationGet = await userService.getLocation(lat, long);
+      // console.log(locationGet);
       // Proceed with the check-in process
       const newAttendance = new attendanceModel({
         userId,
@@ -24,6 +28,7 @@ module.exports = {
         attnedanceDate: currentDate,
         attnedanceLat: lat,
         attnedanceLong: long,
+        attnedanceAddress: locationGet,
       });
 
       await newAttendance.save();
@@ -48,7 +53,11 @@ module.exports = {
         return res.status(400).json({ error: 'One or more fields are empty' });
       }
 
-      const currentDate = new Date();
+
+      const myDate = new Date();
+      const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+
+      const locationGet = await userService.getLocation(lat, long);
 
       // Proceed with the check-in process
       const newAttendance = new attendanceModel({
@@ -57,6 +66,7 @@ module.exports = {
         attnedanceDate: currentDate,
         attnedanceLat: lat,
         attnedanceLong: long,
+        attnedanceAddress: locationGet,
         status: "OUT",
       });
 
