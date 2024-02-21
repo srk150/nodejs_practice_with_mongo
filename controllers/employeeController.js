@@ -358,8 +358,8 @@ module.exports = {
                 return res.status(404).json({ error: 'Employee not found' });
             }
 
-            const attendance = await attendanceModel.find({ userId: userId }).sort({ attnedanceDate: 1 });
-            const tasks = await taskModel.find({ userId, status: 1 });
+            const attendance = await attendanceModel.find({ userId: userId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
             const taskCount = tasks.length; // Count of tasks
 
 
@@ -603,7 +603,7 @@ module.exports = {
 
             const { userId } = req.params;
             //find data from employee id 
-            const taskList = await taskModel.find({ vendorId: userId });
+            const taskList = await taskModel.find({ vendorId: userId }, '-taskAddress');
 
             if (!taskList || taskList.length === 0) { // Check if Task array is empty
                 return res.status(404).json({ message: 'Task not found' });

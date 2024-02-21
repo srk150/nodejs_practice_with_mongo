@@ -7,8 +7,8 @@ router.post('/verify-vendor', vendorController.verifyOTPVendor);
 router.get('/getVendor/:vendorId', vendorController.getVendorDetails);
 router.put('/update-vendor/:vendorId', vendorController.updateVendor);
 router.delete('/delete/:vendorId', vendorController.vendorDelete);
-
 router.get('/trackVendor/:vendorId', vendorController.getTrackVendor);
+router.post('/current-location', vendorController.currentLocation);
 
 
 module.exports = router;

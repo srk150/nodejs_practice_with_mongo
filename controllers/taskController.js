@@ -148,7 +148,7 @@ module.exports = {
       const employeeIds = employees.map(employee => employee._id);
       const taskList = await taskModel.find({
         vendorId: { $in: [vendorId, ...employeeIds] }
-      });
+      }, '-taskAddress');
 
 
       if (!taskList || taskList.length === 0) { // Check if Task array is empty
@@ -172,7 +172,7 @@ module.exports = {
       const { taskID } = req.params;
 
       // Find the task by ID
-      const taskGet = await taskModel.findById(taskID);
+      const taskGet = await taskModel.findById(taskID, '-taskAddress');
 
       if (!taskGet) {
         return res.status(404).json({ message: 'Task not found' });

@@ -300,8 +300,8 @@ module.exports = {
             }
 
 
-            const attendance = await attendanceModel.find({ userId: vendorId }).sort({ attnedanceDate: 1 });
-            const tasks = await taskModel.find({ userId: vendorId, status: 1 });
+            const attendance = await attendanceModel.find({ userId: vendorId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const tasks = await taskModel.find({ userId: vendorId, status: 1 }, '-taskAddress');
             const taskCount = tasks.length; // Count of tasks
 
             const getCheckInOrigin = await attendanceModel.find({ userId: vendorId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
@@ -457,6 +457,35 @@ module.exports = {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
+
+
+    //CurrentLocation
+    currentLocation: async (req, res) => {
+        try {
+            const { vendorId, lat, long } = req.body;
+
+            if (!vendorId || !lat || !long) {
+                return res.status(400).json({ error: 'One or more fields are empty' });
+            }
+
+            const vendor = await vendorModel.findById(vendorId, '-vandorOtp');
+            if (!vendor) {
+                return res.status(404).json({ error: 'Vendor not found' });
+            }
+
+            vendor.vandorLat = lat || vendor.vandorLat;
+            vendor.vandorLong = long || vendor.vandorLong;
+
+            await vendor.save();
+
+            res.status(200).json({ message: 'Current location updated successfully' });
+
+        } catch (error) {
+            console.error('Error fetching vendor current location', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
 
 
 };
