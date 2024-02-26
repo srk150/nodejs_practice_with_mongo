@@ -37,8 +37,8 @@ const vendorSchema = new mongoose.Schema({
     },
 
     vandorCreated: {
-        type: Date,
-        required: true,
+        type: String,
+        default: '',
     },
 
     status: {
