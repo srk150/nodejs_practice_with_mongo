@@ -69,7 +69,7 @@ const clientSchema = new mongoose.Schema({
     },
 
     created: {
-        type: Date,
+        type: String,
         required: true,
     },
 
