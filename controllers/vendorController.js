@@ -9,7 +9,7 @@ const taskModel = require('../models/taskModel');
 
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
-const moment = require('moment');
+const moment = require('moment-timezone');
 
 
 module.exports = {
@@ -31,8 +31,11 @@ module.exports = {
             const otpCode = "1230";
 
 
+
             const myDate = new Date();
-            const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+            const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+            const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+
 
             if (!vendor) {
 

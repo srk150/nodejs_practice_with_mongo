@@ -9,7 +9,8 @@ const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
 const multer = require('multer');
 const path = require('path');
 
-const moment = require('moment');
+const moment = require('moment-timezone');
+
 const { exit } = require('process');
 
 
@@ -98,7 +99,8 @@ module.exports = {
 
 
         const myDate = new Date();
-        const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+        const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+        const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
 
 
         const newTask = new taskModel({
@@ -263,7 +265,8 @@ module.exports = {
         }
 
         const myDate = new Date();
-        const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+        const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+        const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
 
         task.clientId = clientId || task.clientId;
         task.clientName = clientName || task.clientName;
