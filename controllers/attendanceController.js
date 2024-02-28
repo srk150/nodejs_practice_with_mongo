@@ -1,6 +1,8 @@
 const attendanceModel = require('../models/attendanceModel');
 const axios = require('axios');
-const moment = require('moment');
+// const moment = require('moment');
+const moment = require('moment-timezone');
+
 const userService = require('../services/userService');
 
 module.exports = {
@@ -16,8 +18,11 @@ module.exports = {
         return res.status(400).json({ error: 'One or more fields are empty' });
       }
 
+
       const myDate = new Date();
-      const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+      const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+      const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+
 
       const locationGet = await userService.getLocation(lat, long);
       // console.log(locationGet);
@@ -55,7 +60,8 @@ module.exports = {
 
 
       const myDate = new Date();
-      const currentDate = moment(myDate).format('YYYY-MM-DD HH:mm a');
+      const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+      const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
 
       const locationGet = await userService.getLocation(lat, long);
 
