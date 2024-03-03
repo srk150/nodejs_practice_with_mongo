@@ -46,10 +46,13 @@ module.exports = {
 
                 const { clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long, vendorId, type } = req.body;
 
-                if (!clientFullName || !clientEmail || !clientMobile || !clientCompany || !clientAddress || !clientCity || !clientState || !clientCountry || !clientZip || !lat || !long || !vendorId || !type) {
-                    return res.status(400).json({ error: 'One or more fields are empty' });
-                }
+                // if (!clientFullName || !clientEmail || !clientMobile || !clientCompany || !clientAddress || !clientCity || !clientState || !clientCountry || !clientZip || !lat || !long || !vendorId || !type) {
+                //     return res.status(400).json({ error: 'One or more fields are empty' });
+                // }
 
+                if (!clientFullName || !clientMobile ) {
+                    return res.status(400).json({ error: 'Client name or mobile number is required!' });
+                }
                 // Check if file was provided
 
                 let uploadedFile = '';
@@ -82,7 +85,7 @@ module.exports = {
 
                 }
 
-                if (!await userService.isValidEmail(clientEmail)) {
+                if (clientEmail && !await userService.isValidEmail(clientEmail)) {
                     return res.status(400).json({ message: 'Invalid email address' });
                 }
                 if (!await userService.isValidMobile(clientMobile)) {
@@ -195,7 +198,7 @@ module.exports = {
 
 
     //For updateClient update
-    updateClient: async (req, res) => {
+    updateClients: async (req, res) => {
 
         try {
 
@@ -214,12 +217,10 @@ module.exports = {
                 }
 
 
-                const { clientId } = req.params;
+                const { clientId, clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long } = req.body;
 
-                const { clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long } = req.body;
-
-                if (!clientFullName || !clientEmail || !clientMobile || !clientCompany || !clientAddress || !clientCity || !clientState || !clientCountry || !clientZip || !lat || !long) {
-                    return res.status(400).json({ error: 'One or more fields are empty' });
+                if (!clientFullName || !clientMobile ) {
+                    return res.status(400).json({ error: 'Client name or mobile number is required!' });
                 }
 
                 // Check if file was provided
@@ -236,7 +237,7 @@ module.exports = {
 
                 const Client = await clientModel.findById(clientId);
 
-                if (!await userService.isValidEmail(clientEmail)) {
+                if (clientEmail && !await userService.isValidEmail(clientEmail)) {
                     return res.status(400).json({ message: 'Invalid email address' });
                 }
                 if (!await userService.isValidMobile(clientMobile)) {

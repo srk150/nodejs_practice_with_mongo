@@ -55,11 +55,16 @@ module.exports = {
         }
 
         const { userId, clientId, clientName, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
-
+       
+        // task name, 
 
         // Check if any of the properties is empty or falsy
-        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long || !vendorId || !type) {
-          return res.status(400).json({ error: 'One or more fields are empty' });
+        // if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long || !vendorId || !type) {
+        //   return res.status(400).json({ error: 'One or more fields are empty' });
+        // }
+
+        if (!userId || !taskName) {
+          return res.status(400).json({ error: 'Task description is empty' });
         }
 
         // Check if file was provided
@@ -214,11 +219,11 @@ module.exports = {
   },
 
   //task Update
-  taskUpdate: async (req, res) => {
+  taskUpdates: async (req, res) => {  
 
     try {
 
-
+      console.log(req.body);
       // Handle file upload using multer middleware
       upload(req, res, async function (err) {
 
@@ -239,13 +244,8 @@ module.exports = {
 
 
         // Check if any of the properties is empty or falsy
-        if (!taskID) {
-          return res.status(400).json({ error: 'Task id is empty' });
-        }
-
-        // Check if any of the properties is empty or falsy
-        if (!userId || !clientId || !clientName || !taskName || !taskDate || !address || !lat || !long) {
-          return res.status(400).json({ error: 'One or more fields are empty' });
+        if (!taskID || !taskName) {
+          return res.status(400).json({ error: 'Task description is empty' });
         }
 
 

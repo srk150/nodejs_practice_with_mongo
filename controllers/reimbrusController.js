@@ -40,8 +40,12 @@ module.exports = {
 
 
                 // Check if any of the properties is empty or false 
-                if (!vendorId || !reimbDate || !reimbType || !notes || !amount || !type) {
-                    return res.status(400).json({ error: 'One or more fields are empty' });
+                // if (!vendorId || !reimbDate || !reimbType || !notes || !amount || !type) {
+                //     return res.status(400).json({ error: 'One or more fields are empty' });
+                // }
+
+                if (!reimbType || !amount ) {
+                    return res.status(400).json({ error: 'reimbrushment type and amount is required' });
                 }
 
 
@@ -185,10 +189,13 @@ module.exports = {
                 const { reimbDate, reimbType, notes, amount, reimbId } = req.body;
 
 
-                if (!reimbDate || !reimbType || !notes || !amount || !reimbId) {
-                    return res.status(400).json({ error: 'One or more fields are empty' });
-                }
+                // if (!reimbDate || !reimbType || !notes || !amount || !reimbId) {
+                //     return res.status(400).json({ error: 'One or more fields are empty' });
+                // }
 
+                if (!reimbType || !amount ) {
+                    return res.status(400).json({ error: 'reimbrushment type and amount is required' });
+                }
 
                 const reimbrushment = await reimbrushmentModel.findById(reimbId);
 

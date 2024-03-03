@@ -33,6 +33,11 @@ const attendanceSchema = new mongoose.Schema({
     default: '',
   },
 
+  createdAt: {
+    type: String,
+    default: '',
+  },
+  
   status: {
     type: String,
     enum: ['IN', 'OUT'],

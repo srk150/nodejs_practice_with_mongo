@@ -5,13 +5,13 @@ const reimbrushSchema = new mongoose.Schema({
 
     vendorId: {
         type: String,
-        required: true,
+        default: '',
 
     },
 
     reimbDate: {
         type: String,
-        required: true,
+        default: '',
 
     },
 
@@ -23,7 +23,7 @@ const reimbrushSchema = new mongoose.Schema({
 
     notes: {
         type: String,
-        required: true,
+        default: '',
     },
 
     amount: {
@@ -39,7 +39,7 @@ const reimbrushSchema = new mongoose.Schema({
 
     createdAt: {
         type: String,
-        required: true,
+        default: '',
     },
 
     type: {

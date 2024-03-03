@@ -8,7 +8,7 @@ router.get('/getEmpDetail/:userId', employeeController.getEmployee);
 router.put('/update-employee/:userId', employeeController.updateEmployee);
 router.post('/employee-login', employeeController.employeeLogin);
 router.post('/verify', employeeController.verifyOTP);
-router.get('/trackEmployee/:userId', employeeController.getEmpTrack);
+router.post('/trackEmployee', employeeController.getEmpTrack);
 router.delete('/delete/:userId', employeeController.empDelete);
 router.post('/current-location', employeeController.currentLocation);
 router.get('/clientlist/:userId', employeeController.clientList);

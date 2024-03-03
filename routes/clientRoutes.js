@@ -11,6 +11,6 @@ router.post('/create', clientController.createClient);
 router.get('/list/:vendorId', clientController.clientList);
 router.get('/details/:clientId', clientController.clientDetails);
 router.delete('/delete/:clientId', clientController.clientDelete);
-router.put('/update-client/:clientId', clientController.updateClient);
+router.post('/update-client', clientController.updateClients);
 
 module.exports = router;

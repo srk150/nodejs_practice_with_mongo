@@ -14,7 +14,7 @@ const clientSchema = new mongoose.Schema({
     },
     clientEmail: {
         type: String,
-        required: true,
+        default: '',
     },
     clientMobile: {
         type: String,
@@ -23,33 +23,33 @@ const clientSchema = new mongoose.Schema({
 
     clientCompany: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientAddress: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientCity: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientState: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientCountry: {
         type: String,
-        required: true,
+        default: '',
     },
 
 
     clientZip: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientDocument: {
@@ -70,7 +70,7 @@ const clientSchema = new mongoose.Schema({
 
     created: {
         type: String,
-        required: true,
+        default: '',
     },
 
     clientLocation: {

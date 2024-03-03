@@ -5,21 +5,22 @@ const taskSchema = new mongoose.Schema({
 
   vendorId: {
     type: String,
+    default: '',
 
   },
 
   userId: {
     type: String,
-    required: true,
+    default: '',
   },
   clientId: {
     type: String,
-    required: true,
+    default: '',
   },
 
   clientName: {
     type: String,
-    required: true,
+    default: '',
   },
 
   taskName: {
@@ -29,12 +30,12 @@ const taskSchema = new mongoose.Schema({
 
   taskDate: {
     type: String,
-    required: true,
+    default: '',
   },
 
   address: {
     type: String,
-    required: true,
+    default: '',
   },
 
   created: {
@@ -73,11 +74,11 @@ const taskSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ['Point'],
-      required: true,
+      default: '0',
     },
     coordinates: {
       type: [Number],
-      required: true,
+      default: '0',
     },
   },
 

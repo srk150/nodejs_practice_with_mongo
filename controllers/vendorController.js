@@ -295,15 +295,26 @@ module.exports = {
 
     getTrackVendor: async (req, res) => {
         try {
+             
 
-            const vendorId = req.params.vendorId;
+            const { vendorId, filterDate } = req.body;
+
+            if (!vendorId) {
+                return res.status(400).json({ error: 'Vendor id is empty' });
+            }
+
+            // const vendorId = req.params.vendorId;
+
+            
+
             const vendor = await vendorModel.findById(vendorId, '-vandorOtp');
             if (!vendor) {
                 return res.status(404).json({ error: 'Vendor not found' });
             }
 
 
-            const attendance = await attendanceModel.find({ userId: vendorId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const attendance = await attendanceModel.find({ userId: vendorId, createdAt: filterDate  }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            
             const tasks = await taskModel.find({ userId: vendorId, status: 1 }, '-taskAddress');
             const taskCount = tasks.length; // Count of tasks
 

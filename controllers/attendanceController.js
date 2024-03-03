@@ -22,6 +22,7 @@ module.exports = {
       const myDate = new Date();
       const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
       const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+      const createdAt = currentDateIST.format('YYYY-MM-DD');
 
 
       const locationGet = await userService.getLocation(lat, long);
@@ -34,6 +35,7 @@ module.exports = {
         attnedanceLat: lat,
         attnedanceLong: long,
         attnedanceAddress: locationGet,
+        createdAt:createdAt,
       });
 
       await newAttendance.save();
@@ -62,6 +64,7 @@ module.exports = {
       const myDate = new Date();
       const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
       const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+      const createdAt = currentDateIST.format('YYYY-MM-DD');
 
       const locationGet = await userService.getLocation(lat, long);
 
@@ -74,6 +77,7 @@ module.exports = {
         attnedanceLong: long,
         attnedanceAddress: locationGet,
         status: "OUT",
+        createdAt:createdAt,
       });
 
       await newAttendance.save();

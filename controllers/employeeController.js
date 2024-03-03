@@ -351,14 +351,23 @@ module.exports = {
     getEmpTrack: async (req, res) => {
         try {
 
-            const userId = req.params.userId;
+
+            const { userId, filterDate } = req.body;
+
+            if (!userId) {
+                return res.status(400).json({ error: 'User id is empty' });
+            }
+
+            
+            // const userId = req.params.userId;
 
             const employee = await employeeModel.findById(userId, '-otp');
             if (!employee) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
 
-            const attendance = await attendanceModel.find({ userId: userId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            // const attendance = await attendanceModel.find({ userId: userId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const attendance = await attendanceModel.find({ userId: userId, createdAt: filterDate  }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
             const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
             const taskCount = tasks.length; // Count of tasks
 
