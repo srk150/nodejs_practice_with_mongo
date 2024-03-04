@@ -50,7 +50,7 @@ module.exports = {
                 //     return res.status(400).json({ error: 'One or more fields are empty' });
                 // }
 
-                if (!clientFullName || !clientMobile ) {
+                if (!clientFullName || !clientMobile) {
                     return res.status(400).json({ error: 'Client name or mobile number is required!' });
                 }
                 // Check if file was provided
@@ -92,7 +92,7 @@ module.exports = {
                     return res.status(400).json({ message: 'Invalid mobile number' });
                 }
 
-                if (existingEmail) {
+                if (clientEmail && existingEmail) {
                     return res.status(400).json({ message: 'Email already exists' });
                 }
 
@@ -219,7 +219,7 @@ module.exports = {
 
                 const { clientId, clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long } = req.body;
 
-                if (!clientFullName || !clientMobile ) {
+                if (!clientFullName || !clientMobile) {
                     return res.status(400).json({ error: 'Client name or mobile number is required!' });
                 }
 
@@ -263,7 +263,7 @@ module.exports = {
                     const existingEmail = await clientModel.findOne({ clientEmail });
 
 
-                    if (existingEmail && existingEmail._id.toString() !== clientId) {
+                    if (clientEmail && existingEmail && existingEmail._id.toString() !== clientId) {
                         return res.status(400).json({ message: 'Email Id already exists for another client' });
                     }
                 }
