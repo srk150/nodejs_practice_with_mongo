@@ -30,13 +30,13 @@ const empSchema = new mongoose.Schema({
 
     machineNumber: {
         type: String,
-        required: true,
+        default: '',
 
     },
 
     workLocation: {
         type: String,
-        required: true,
+        default: '',
 
     },
 

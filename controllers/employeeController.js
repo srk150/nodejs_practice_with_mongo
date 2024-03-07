@@ -14,7 +14,7 @@ module.exports = {
         try {
             const { fullname, mobile, userType, machineNumber, workLocation, vendorId } = req.body;
 
-            if (!fullname || !mobile || !userType || !machineNumber || !workLocation || !vendorId) {
+            if (!fullname || !mobile || !userType || !vendorId) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
 
@@ -98,7 +98,7 @@ module.exports = {
 
             const { fullname, mobile, userType, machineNumber, workLocation } = req.body;
 
-            if (!fullname || !mobile || !userType || !machineNumber || !workLocation) {
+            if (!fullname || !mobile || !userType) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
 
@@ -358,7 +358,7 @@ module.exports = {
                 return res.status(400).json({ error: 'User id is empty' });
             }
 
-            
+
             // const userId = req.params.userId;
 
             const employee = await employeeModel.findById(userId, '-otp');
@@ -367,7 +367,7 @@ module.exports = {
             }
 
             // const attendance = await attendanceModel.find({ userId: userId }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
-            const attendance = await attendanceModel.find({ userId: userId, createdAt: filterDate  }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const attendance = await attendanceModel.find({ userId: userId, createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
             const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
             const taskCount = tasks.length; // Count of tasks
 
