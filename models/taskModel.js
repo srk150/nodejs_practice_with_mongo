@@ -23,6 +23,11 @@ const taskSchema = new mongoose.Schema({
     default: '',
   },
 
+  clientEmail: {
+    type: String,
+    default: '',
+  },
+
   taskName: {
     type: String,
     required: true,

@@ -54,8 +54,8 @@ module.exports = {
           res.status(500).json({ error: "An unknown error occurred during file upload." });
         }
 
-        const { userId, clientId, clientName, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
-       
+        const { userId, clientId, clientName, clientEmail, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
+
         // task name, 
 
         // Check if any of the properties is empty or falsy
@@ -112,6 +112,7 @@ module.exports = {
           userId,
           clientId,
           clientName,
+          clientEmail,
           taskName,
           taskDate,
           address,
@@ -219,7 +220,7 @@ module.exports = {
   },
 
   //task Update
-  taskUpdates: async (req, res) => {  
+  taskUpdates: async (req, res) => {
 
     try {
 
@@ -240,7 +241,7 @@ module.exports = {
 
 
 
-        const { taskID, userId, clientId, clientName, taskName, taskDate, address, lat, long } = req.body;
+        const { taskID, userId, clientId, clientName, clientEmail, taskName, taskDate, address, lat, long } = req.body;
 
 
         // Check if any of the properties is empty or falsy
@@ -270,6 +271,7 @@ module.exports = {
 
         task.clientId = clientId || task.clientId;
         task.clientName = clientName || task.clientName;
+        task.clientEmail = clientEmail || task.clientEmail;
         task.taskName = taskName || task.taskName;
         task.userId = userId || task.userId;
         task.taskDate = taskDate || task.taskDate;
