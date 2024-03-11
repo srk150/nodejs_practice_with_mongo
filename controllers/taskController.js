@@ -364,8 +364,8 @@ module.exports = {
         }
 
         //get address from where task done
-        const locationGet = await userService.getLocation(lat, long);
-
+        // const locationGet = await userService.getLocation(lat, long);
+        const locationGet = 0;
 
         task.status = 1 || task.status;
         task.taskNotes = notes || task.taskNotes;
