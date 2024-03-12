@@ -35,7 +35,7 @@ module.exports = {
         attnedanceLat: lat,
         attnedanceLong: long,
         attnedanceAddress: locationGet,
-        createdAt:createdAt,
+        createdAt: createdAt,
       });
 
       await newAttendance.save();
@@ -77,7 +77,7 @@ module.exports = {
         attnedanceLong: long,
         attnedanceAddress: locationGet,
         status: "OUT",
-        createdAt:createdAt,
+        createdAt: createdAt,
       });
 
       await newAttendance.save();
@@ -139,6 +139,53 @@ module.exports = {
 
 
   },
+
+
+  attendanceInOut: async (req, res) => {
+    try {
+
+      const { userId, lat, long, type } = req.body;
+
+      // Check if any one empty
+      if (!userId || !lat || !long) {
+        return res.status(400).json({ error: 'One or more fields are empty' });
+      }
+
+      const myDate = new Date();
+      const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+      const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+      const createdAt = currentDateIST.format('YYYY-MM-DD');
+
+      const userStatusCount = await attendanceModel.countDocuments({ userId });
+
+      let status = "IN"; // Default status is IN
+
+      // If the user has odd status count, set status to OUT
+      if (userStatusCount % 2 === 1) {
+        status = "OUT";
+      }
+
+      const newAttendance = new attendanceModel({
+        userId,
+        type,
+        attnedanceDate: currentDate,
+        attnedanceLat: lat,
+        attnedanceLong: long,
+        attnedanceAddress: "0",
+        status,
+        createdAt: createdAt,
+      });
+
+      await newAttendance.save();
+
+      res.status(200).json({ message: 'Attendance added successfully' });
+
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  },
+
 
 };
 //module.exports end

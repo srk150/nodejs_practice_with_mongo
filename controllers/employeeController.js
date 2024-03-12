@@ -51,14 +51,29 @@ module.exports = {
     getEmpList: async (req, res) => {
         try {
             const { vendorId } = req.params;
+            const { empName } = req.query;
 
-            const employees = await employeeModel.find({ vendorId: vendorId }, '-otp');
+            // const employees = await employeeModel.find({ vendorId: vendorId }, '-otp');
+            // if (!employees || employees.length === 0) { // Check if employees array is empty
+            //     return res.status(404).json({ message: 'Employees not found' });
+            // }
+            // res.status(200).json(employees);
+
+            let query = { vendorId: vendorId };
+
+            if (empName) {
+                query.fullname = { $regex: empName, $options: 'i' }; // Case-insensitive search
+            }
+
+            // Find employees matching the query
+            const employees = await employeeModel.find(query, '-otp');
 
             if (!employees || employees.length === 0) { // Check if employees array is empty
                 return res.status(404).json({ message: 'Employees not found' });
             }
 
             res.status(200).json(employees);
+
 
         } catch (error) {
             console.error('Error fetching all employees:', error);

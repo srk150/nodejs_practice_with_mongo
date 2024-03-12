@@ -149,15 +149,27 @@ module.exports = {
 
       const { vendorId } = req.params;
 
+      const { status } = req.query;
 
       // const taskList = await taskModel.find({ vendorId: vendorId });
       // Fetching employees with the given vendorId
       const employees = await employeeModel.find({ vendorId: vendorId });
       const employeeIds = employees.map(employee => employee._id);
-      const taskList = await taskModel.find({
-        vendorId: { $in: [vendorId, ...employeeIds] }
-      }, '-taskAddress');
 
+      // const taskList = await taskModel.find({
+      //   vendorId: { $in: [vendorId, ...employeeIds] }
+      // }, '-taskAddress');
+
+
+
+      let query = { vendorId: { $in: [vendorId, ...employeeIds] } };
+
+      // Add status filter if provided
+      if (status !== undefined && (status === '0' || status === '1')) {
+        query.status = status;
+      }
+
+      const taskList = await taskModel.find(query, '-taskAddress');
 
       if (!taskList || taskList.length === 0) { // Check if Task array is empty
         return res.status(404).json({ message: 'Task not found' });
@@ -204,14 +216,25 @@ module.exports = {
     try {
 
       const { empId } = req.params;
+      const { status } = req.query;
+
 
       // Find the task by ID
-      const taskGet = await taskModel.find({ userId: empId });
-
-      if (!taskGet) {
-        return res.status(404).json({ message: 'Task not found' });
+      // const taskGet = await taskModel.find({ userId: empId });
+      const query = { userId: empId };
+      if (status !== undefined && (status === '0' || status === '1')) {
+        query.status = status;
       }
-      res.status(200).json(taskGet);
+
+
+      const tasks = await taskModel.find(query);
+
+      if (!tasks || tasks.length === 0) {
+        return res.status(404).json({ message: 'Tasks not found' });
+      }
+
+      res.status(200).json(tasks);
+
 
     } catch (error) {
       console.error('Error in task :', error);
