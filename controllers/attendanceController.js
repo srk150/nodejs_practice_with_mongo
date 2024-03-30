@@ -79,7 +79,7 @@ module.exports = {
         status: "OUT",
         createdAt: createdAt,
       });
-
+       
       await newAttendance.save();
 
       res.status(200).json({ message: 'Attendance checked out successfully' });
