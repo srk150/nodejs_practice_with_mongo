@@ -41,6 +41,11 @@ const vendorSchema = new mongoose.Schema({
         default: '',
     },
 
+    agoDate: {
+        type: String,
+        default: '',
+    },
+
     status: {
         type: String,
         enum: ['active', 'inactive'],

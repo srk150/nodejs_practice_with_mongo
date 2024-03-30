@@ -46,6 +46,17 @@ const empSchema = new mongoose.Schema({
 
     },
 
+    agoDate: {
+        type: String,
+        default: '',
+    },
+
+    batteryStatus: {
+        type: String,
+        default: '',
+    },
+    
+
     otp: {
         type: String,
         default: 'null',

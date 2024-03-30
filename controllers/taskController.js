@@ -189,6 +189,7 @@ module.exports = {
 
       const { status } = req.query;
 
+      
       // const taskList = await taskModel.find({ vendorId: vendorId });
       // Fetching employees with the given vendorId
       const employees = await employeeModel.find({ vendorId: vendorId });
@@ -199,8 +200,7 @@ module.exports = {
       // }, '-taskAddress');
 
 
-
-      let query = { vendorId: { $in: [vendorId, ...employeeIds] } };
+      let query = { vendorId: { $in: [vendorId, ...employeeIds] }};
 
       // Add status filter if provided
       if (status !== undefined && (status === '0' || status === '1')) {
@@ -257,7 +257,7 @@ module.exports = {
       const { empId } = req.params;
       const { status } = req.query;
 
-
+      
       // Find the task by ID
       // const taskGet = await taskModel.find({ userId: empId });
       const query = { userId: empId };
@@ -265,13 +265,10 @@ module.exports = {
         query.status = status;
       }
 
-
       const tasks = await taskModel.find(query);
-
       if (!tasks || tasks.length === 0) {
         return res.status(404).json({ message: 'Tasks not found' });
       }
-
 
       res.status(200).json(tasks);
 

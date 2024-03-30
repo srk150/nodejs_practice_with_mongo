@@ -1,4 +1,7 @@
 const attendanceModel = require('../models/attendanceModel');
+const vendorModel = require('../models/vendorModel');
+const employeeModel = require('../models/employeeModel');
+
 const axios = require('axios');
 // const moment = require('moment');
 const moment = require('moment-timezone');
@@ -158,12 +161,50 @@ module.exports = {
 
       const userStatusCount = await attendanceModel.countDocuments({ userId });
 
+
+      const agoDate = new Date().toISOString();
+
       let status = "IN"; // Default status is IN
 
       // If the user has odd status count, set status to OUT
       if (userStatusCount % 2 === 1) {
         status = "OUT";
       }
+       
+
+
+      if(type =='vendor'){
+         
+        
+
+        const filter = { _id: userId };
+        const updateDoc = {
+            $set: {
+              agoDate: agoDate
+            }
+        };
+
+        const result = await vendorModel.updateOne(filter, updateDoc);
+
+
+
+      }else{
+        
+       
+        const filter = { _id: userId };
+        const updateDoc = {
+            $set: {
+              agoDate: agoDate
+            }
+        };
+
+        const result = await employeeModel.updateOne(filter, updateDoc);
+
+
+      }
+
+
+     
 
       const newAttendance = new attendanceModel({
         userId,

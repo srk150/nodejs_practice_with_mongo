@@ -588,7 +588,7 @@ module.exports = {
     //CurrentLocation
     currentLocation: async (req, res) => {
         try {
-            const { userId, lat, long } = req.body;
+            const { userId, lat, long, batteryStatus } = req.body;
 
             if (!userId || !lat || !long) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
@@ -601,7 +601,8 @@ module.exports = {
 
             employee.latitude = lat || employee.latitude;
             employee.longitude = long || employee.longitude;
-
+            employee.batteryStatus = batteryStatus || employee.batteryStatus;
+            
             await employee.save();
 
             res.status(200).json({ message: 'Current location updated successfully' });

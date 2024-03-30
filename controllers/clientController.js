@@ -217,7 +217,7 @@ module.exports = {
                 }
 
 
-                const { clientId, clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long } = req.body;
+                const { clientId, clientFullName, clientEmail, clientMobile, clientCompany, clientAddress, clientCity, clientState, clientCountry, clientZip, lat, long, vendorId, type } = req.body;
 
                 if (!clientFullName || !clientMobile) {
                     return res.status(400).json({ error: 'Client name or mobile number is required!' });
@@ -291,7 +291,9 @@ module.exports = {
                 Client.clientLocation.coordinates[1] = long || Client.clientLocation.coordinates[1];
 
                 Client.clientDocument = uploadedFile || Client.clientDocument;
-
+                Client.vendorId = vendorId || Client.vendorId;
+                Client.type = type || Client.type;
+                
                 await Client.save();
 
                 res.status(200).json({ message: 'Client updated successfully' });
