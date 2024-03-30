@@ -2,6 +2,7 @@ const employeeModel = require('../models/employeeModel');
 const attendanceModel = require('../models/attendanceModel');
 const taskModel = require('../models/taskModel');
 const clientModel = require('../models/clientModel');
+const vendorModel = require('../models/vendorModel');
 
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
@@ -20,8 +21,17 @@ module.exports = {
 
             // Check if the mobile already exists
             const existingMobile = await employeeModel.findOne({ mobile });
+            const existingMobile_vendor = await vendorModel.findOne({ mobile });
 
+            let companyName = '';
 
+            const vendorExists = await vendorModel.findById(vendorId);
+          
+            if (vendorExists) {
+                companyName = vendorExists.vendorCompany ;
+            }else{
+                companyName = vendorExists.vendorCompany ;
+            }
 
             if (!await userService.isValidMobile(mobile)) {
                 return res.status(400).json({ message: 'Invalid mobile number' });
@@ -31,9 +41,14 @@ module.exports = {
                 return res.status(400).json({ message: 'Mobile already exists' });
             }
 
+            if(existingMobile_vendor){
+                return res.status(400).json({ message: 'Mobile already exists' });
+
+            }
+
 
             // Create a new user
-            const newUser = new employeeModel({ fullname, mobile, userType, machineNumber, workLocation, vendorId });
+            const newUser = new employeeModel({ fullname, mobile, userType, machineNumber, workLocation, vendorId, companyName });
 
             // Save the user to the database
             await newUser.save();

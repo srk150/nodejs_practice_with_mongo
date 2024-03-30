@@ -39,6 +39,19 @@ module.exports = {
 
             if (!vendor) {
 
+                const existingMobile    = await vendorModel.findOne({ mobileNumber });
+                const existingMobileEmp = await employeeModel.findOne({ mobileNumber });
+                
+                if (existingMobile) {
+                    return res.status(400).json({ message: 'Mobile already exists' });
+                }
+    
+                if(existingMobileEmp){
+                    return res.status(400).json({ message: 'Mobile already exists' });
+    
+                }
+
+
                 const newVendor = new vendorModel({ vendorMobile: mobileNumber, vandorOtp: otpCode, vandorCreated: currentDate });
                 await newVendor.save();
 

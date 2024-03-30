@@ -2,6 +2,7 @@ const taskModel = require('../models/taskModel');
 const userService = require('../services/userService');
 const employeeModel = require('../models/employeeModel');
 const vendorModel = require('../models/vendorModel');
+const clientModel = require('../models/clientModel');
 
 const axios = require('axios');
 const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
@@ -54,7 +55,7 @@ module.exports = {
           res.status(500).json({ error: "An unknown error occurred during file upload." });
         }
 
-        const { userId, clientId, clientName, clientEmail, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
+        const { userId, clientId,taskName, taskDate, address, lat, long, vendorId, type } = req.body;
 
         // task name, 
 
@@ -84,13 +85,13 @@ module.exports = {
 
         // check sendor admin or employee
         let createdBy = '';
-
+        let empName = '';
         if (type == "vendor") {
 
           const vendorExisting = await vendorModel.findById({ _id: vendorId });
 
           createdBy = vendorExisting.vendorName;
-
+          empName   =  vendorExisting.vendorName
         } else {
 
           const objectId = new ObjectId(vendorId);
@@ -100,9 +101,44 @@ module.exports = {
             createdBy = empExisting.fullname;
           }
 
+          
+
         }
 
+        const empextes = await employeeModel.findById({ _id: userId });
 
+        if (type == "vendor" && empextes ) {
+          empName   =  empextes.fullname;
+        
+        }else{
+       
+          empName   =  createdBy;
+
+        }
+        
+        //get client mobile
+        let clientMobile ='';
+        let clientName ='';
+        let clientEmail ='';
+        if (clientId) {
+          const clientExists = await clientModel.findById(clientId);
+          
+          if (clientExists) {
+             clientMobile = clientExists.clientMobile ;
+             clientName   = clientExists.clientFullName ;
+             clientEmail  = clientExists.clientEmail ;
+
+          } else {
+             clientMobile = ""; 
+             clientName = ""; 
+             clientEmail = ""; 
+          }
+        } else {
+             clientMobile = ""; 
+             clientName = ""; 
+             clientEmail = ""; 
+        }
+        
         const myDate = new Date();
         const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
         const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
@@ -113,6 +149,8 @@ module.exports = {
           clientId,
           clientName,
           clientEmail,
+          empName:empName,
+          clientMobile:clientMobile,
           taskName,
           taskDate,
           address,

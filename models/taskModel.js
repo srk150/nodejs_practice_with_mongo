@@ -28,6 +28,17 @@ const taskSchema = new mongoose.Schema({
     default: '',
   },
 
+
+  clientMobile: {
+    type: String,
+  },
+
+  empName: {
+    type: String,
+   
+  },
+
+
   taskName: {
     type: String,
     required: true,

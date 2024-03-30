@@ -22,6 +22,12 @@ const empSchema = new mongoose.Schema({
     },
 
 
+    companyName: {
+        type: String,
+
+    },
+
+
     userType: {
         type: String,
         required: true,
