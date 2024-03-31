@@ -284,7 +284,6 @@ module.exports = {
 
     try {
 
-      console.log(req.body);
       // Handle file upload using multer middleware
       upload(req, res, async function (err) {
 

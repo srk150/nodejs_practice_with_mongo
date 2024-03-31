@@ -46,6 +46,11 @@ const vendorSchema = new mongoose.Schema({
         default: '',
     },
 
+    empImg: {
+        type: String,
+        default: '',
+    },
+
     status: {
         type: String,
         enum: ['active', 'inactive'],

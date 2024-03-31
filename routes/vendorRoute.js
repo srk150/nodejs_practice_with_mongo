@@ -9,6 +9,7 @@ router.put('/update-vendor/:vendorId', vendorController.updateVendor);
 router.delete('/delete/:vendorId', vendorController.vendorDelete);
 router.post('/trackVendor', vendorController.getTrackVendor);
 router.post('/current-location', vendorController.currentLocation);
+router.post('/update-image', vendorController.imageUpdate);
 
 
 module.exports = router;

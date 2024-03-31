@@ -269,7 +269,19 @@ module.exports = {
                 }
 
 
+                let createdBy = '';
+                if (type == 'vendor') {
 
+                    const existingvendor = await vendorModel.findOne({ _id: vendorId });
+
+                    createdBy = existingvendor.vendorName;
+
+                } else if (type == 'employee') {
+
+                    const existingvendor = await employeeModel.findOne({ _id: vendorId });
+                    createdBy = existingvendor.fullname;
+
+                }
 
                 const myDate = new Date();
                 const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
@@ -293,6 +305,7 @@ module.exports = {
                 Client.clientDocument = uploadedFile || Client.clientDocument;
                 Client.vendorId = vendorId || Client.vendorId;
                 Client.type = type || Client.type;
+                Client.createdBy = createdBy || Client.createdBy;
                 
                 await Client.save();
 

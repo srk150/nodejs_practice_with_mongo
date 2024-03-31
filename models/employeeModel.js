@@ -73,6 +73,10 @@ const empSchema = new mongoose.Schema({
         default: '',
     },
 
+    empImg: {
+        type: String,
+        default: '',
+    },
 
     status: {
         type: String,

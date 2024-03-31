@@ -118,6 +118,83 @@ module.exports = {
         }
     },
 
+
+    getEmpList: async (req, res) => {
+        try {
+            const { vendorId } = req.params;
+            const { empName } = req.query;
+
+            // const employees = await employeeModel.find({ vendorId: vendorId }, '-otp');
+            // if (!employees || employees.length === 0) { // Check if employees array is empty
+            //     return res.status(404).json({ message: 'Employees not found' });
+            // }
+            // res.status(200).json(employees);
+
+            let query = { vendorId: vendorId };
+
+            if (empName) {
+                query.fullname = { $regex: empName, $options: 'i' }; // Case-insensitive search
+            }
+
+            // Find employees matching the query
+            const employees = await employeeModel.find(query, '-otp');
+
+            if (!employees || employees.length === 0) { // Check if employees array is empty
+                return res.status(404).json({ message: 'Employees not found' });
+            }
+
+            res.status(200).json(employees);
+
+
+        } catch (error) {
+            console.error('Error fetching all employees:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+
+
+    //filterEmpType  filter
+    filterEmpType: async (req, res) => {
+        try {
+            const myDate = new Date();
+            const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+            const providedDate = currentDateIST.format('YYYY-MM-DD');
+    
+            const { vendorId, userType, attandance_status } = req.body;
+    
+            if (!vendorId || !userType || !attandance_status) {
+                return res.status(400).json({ error: 'One or more fields are empty' });
+            }
+    
+            // Find the employees by vendorId and userType
+            const emp = await employeeModel.find({ vendorId: vendorId, userType: userType }, '-otp')
+                .sort({ _id: -1 });
+    
+            const userIdsfilterby = emp.map(employee => employee._id);
+    
+            // Find attendance for users with those IDs for the provided date and status 'IN'
+            const attendanceList = await attendanceModel.find({ userId: { $in: userIdsfilterby }, status: attandance_status, createdAt: { $gte: providedDate, $lt: moment(providedDate).add(1, 'day').format('YYYY-MM-DD') } });
+    
+            const userIdsfilterbyatt = attendanceList.map(employee => employee.userId);
+    
+            // Find the employees who have attendance marked as "In" for the provided date
+            const empMain = await employeeModel.find({ _id: { $in: userIdsfilterbyatt } }, '-otp')
+                .sort({ _id: -1 });
+    
+            if (!empMain || empMain.length === 0) {
+                return res.status(404).json({ message: 'No employees found with attendance marked as today for the provided date' });
+            }
+    
+            res.status(200).json(empMain);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+    
+
+
     //updateEmployee data
 
     updateEmployee: async (req, res) => {

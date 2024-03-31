@@ -10,6 +10,24 @@ const taskModel = require('../models/taskModel');
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
 const moment = require('moment-timezone');
+const multer = require('multer');
+const path = require('path');
+
+
+
+// Storage configuration for multer
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "./public/images");
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+      const ext = path.extname(file.originalname);
+      cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+    },
+  });
+  
+  const upload = multer({ storage }).single("profileImg");
 
 
 module.exports = {
@@ -512,6 +530,70 @@ module.exports = {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
+   
+   
+    imageUpdate: async (req, res) => {
+        try {
+
+      // Handle file upload using multer middleware
+      upload(req, res, async function (err) {
+
+        // upload(req, res, async (err) => {
+        if (err instanceof multer.MulterError) {
+          // A Multer error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An error occurred during file upload." });
+        } else if (err) {
+          // An unknown error occurred when uploading.
+          console.error(err);
+          res.status(500).json({ error: "An unknown error occurred during file upload." });
+        }
+
+         // Check if any of the properties is empty or falsy
+         const { userId, type } = req.body;
+
+         if (!userId || !type) {
+            return res.status(400).json({ error: 'User id and type is required!' });
+          }
+
+           // Check if file was provided
+        let uploadedFile = '';
+
+        if (req.file) {
+          uploadedFile = "images/" + req.file.filename;
+        }
+
+        if(type =='vendor'){ 
+           
+            const vendor = await vendorModel.findById(userId);
+
+            if (!vendor) {
+                return res.status(400).json({ error: 'vendor id not found' });
+              }
+
+            vendor.empImg = uploadedFile || vendor.empImg;
+            await vendor.save();
+
+        }else{
+           
+            const employee = await employeeModel.findById(userId);
+            if (!employee) {
+                return res.status(400).json({ error: 'employee id not found' });
+              }
+
+            employee.empImg = uploadedFile || employee.empImg;
+            await employee.save();
+
+        }
+        res.status(201).json({ message: 'Profile image updated successfully!' });
+
+         });
+        } catch (error) {
+            console.error('Error fetching user data', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    
+},
 
 
 
