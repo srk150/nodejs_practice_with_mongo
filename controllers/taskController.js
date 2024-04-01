@@ -55,7 +55,7 @@ module.exports = {
           res.status(500).json({ error: "An unknown error occurred during file upload." });
         }
 
-        const { userId, clientId,taskName, taskDate, address, lat, long, vendorId, type } = req.body;
+        const { userId, clientId, taskName, taskDate, address, lat, long, vendorId, type } = req.body;
 
         // task name, 
 
@@ -91,7 +91,7 @@ module.exports = {
           const vendorExisting = await vendorModel.findById({ _id: vendorId });
 
           createdBy = vendorExisting.vendorName;
-          empName   =  vendorExisting.vendorName
+          empName = vendorExisting.vendorName
         } else {
 
           const objectId = new ObjectId(vendorId);
@@ -101,44 +101,44 @@ module.exports = {
             createdBy = empExisting.fullname;
           }
 
-          
+
 
         }
 
         const empextes = await employeeModel.findById({ _id: userId });
 
-        if (type == "vendor" && empextes ) {
-          empName   =  empextes.fullname;
-        
-        }else{
-       
-          empName   =  createdBy;
+        if (type == "vendor" && empextes) {
+          empName = empextes.fullname;
+
+        } else {
+
+          empName = createdBy;
 
         }
-        
+
         //get client mobile
-        let clientMobile ='';
-        let clientName ='';
-        let clientEmail ='';
+        let clientMobile = '';
+        let clientName = '';
+        let clientEmail = '';
         if (clientId) {
           const clientExists = await clientModel.findById(clientId);
-          
+
           if (clientExists) {
-             clientMobile = clientExists.clientMobile ;
-             clientName   = clientExists.clientFullName ;
-             clientEmail  = clientExists.clientEmail ;
+            clientMobile = clientExists.clientMobile;
+            clientName = clientExists.clientFullName;
+            clientEmail = clientExists.clientEmail;
 
           } else {
-             clientMobile = ""; 
-             clientName = ""; 
-             clientEmail = ""; 
+            clientMobile = "";
+            clientName = "";
+            clientEmail = "";
           }
         } else {
-             clientMobile = ""; 
-             clientName = ""; 
-             clientEmail = ""; 
+          clientMobile = "";
+          clientName = "";
+          clientEmail = "";
         }
-        
+
         const myDate = new Date();
         const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
         const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
@@ -149,8 +149,8 @@ module.exports = {
           clientId,
           clientName,
           clientEmail,
-          empName:empName,
-          clientMobile:clientMobile,
+          empName: empName,
+          clientMobile: clientMobile,
           taskName,
           taskDate,
           address,
@@ -187,9 +187,9 @@ module.exports = {
 
       const { vendorId } = req.params;
 
-      const { status } = req.query;
+      const { status, taskDate } = req.query;
 
-      
+
       // const taskList = await taskModel.find({ vendorId: vendorId });
       // Fetching employees with the given vendorId
       const employees = await employeeModel.find({ vendorId: vendorId });
@@ -200,7 +200,12 @@ module.exports = {
       // }, '-taskAddress');
 
 
-      let query = { vendorId: { $in: [vendorId, ...employeeIds] }};
+      let query = { vendorId: { $in: [vendorId, ...employeeIds] } };
+
+      if (taskDate) {
+        const formattedDate = moment(taskDate).format('YYYY-MM-DD');
+        query.taskDate = { $regex: new RegExp('^' + formattedDate) };
+      }
 
       // Add status filter if provided
       if (status !== undefined && (status === '0' || status === '1')) {
@@ -255,12 +260,20 @@ module.exports = {
     try {
 
       const { empId } = req.params;
-      const { status } = req.query;
+      const { status, taskDate } = req.query;
 
-      
+
       // Find the task by ID
       // const taskGet = await taskModel.find({ userId: empId });
       const query = { userId: empId };
+
+
+      if (taskDate) {
+        const formattedDate = moment(taskDate).format('YYYY-MM-DD');
+        query.taskDate = { $regex: new RegExp('^' + formattedDate) };
+      }
+
+
       if (status !== undefined && (status === '0' || status === '1')) {
         query.status = status;
       }

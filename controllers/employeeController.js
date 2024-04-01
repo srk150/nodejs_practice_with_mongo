@@ -21,16 +21,16 @@ module.exports = {
 
             // Check if the mobile already exists
             const existingMobile = await employeeModel.findOne({ mobile });
-            const existingMobile_vendor = await vendorModel.findOne({ mobile });
+            const existingMobile_vendor = await vendorModel.findOne({ vendorMobile: mobile });
 
             let companyName = '';
 
             const vendorExists = await vendorModel.findById(vendorId);
-          
+
             if (vendorExists) {
-                companyName = vendorExists.vendorCompany ;
-            }else{
-                companyName = vendorExists.vendorCompany ;
+                companyName = vendorExists.vendorCompany;
+            } else {
+                companyName = vendorExists.vendorCompany;
             }
 
             if (!await userService.isValidMobile(mobile)) {
@@ -41,8 +41,8 @@ module.exports = {
                 return res.status(400).json({ message: 'Mobile already exists' });
             }
 
-            if(existingMobile_vendor){
-                return res.status(400).json({ message: 'Mobile already exists' });
+            if (existingMobile_vendor) {
+                return res.status(400).json({ message: 'Mobile already exists in vendor panel' });
 
             }
 
@@ -160,39 +160,39 @@ module.exports = {
             const myDate = new Date();
             const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
             const providedDate = currentDateIST.format('YYYY-MM-DD');
-    
+
             const { vendorId, userType, attandance_status } = req.body;
-    
+
             if (!vendorId || !userType || !attandance_status) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
-    
+
             // Find the employees by vendorId and userType
             const emp = await employeeModel.find({ vendorId: vendorId, userType: userType }, '-otp')
                 .sort({ _id: -1 });
-    
+
             const userIdsfilterby = emp.map(employee => employee._id);
-    
+
             // Find attendance for users with those IDs for the provided date and status 'IN'
             const attendanceList = await attendanceModel.find({ userId: { $in: userIdsfilterby }, status: attandance_status, createdAt: { $gte: providedDate, $lt: moment(providedDate).add(1, 'day').format('YYYY-MM-DD') } });
-    
+
             const userIdsfilterbyatt = attendanceList.map(employee => employee.userId);
-    
+
             // Find the employees who have attendance marked as "In" for the provided date
             const empMain = await employeeModel.find({ _id: { $in: userIdsfilterbyatt } }, '-otp')
                 .sort({ _id: -1 });
-    
+
             if (!empMain || empMain.length === 0) {
                 return res.status(404).json({ message: 'No employees found with attendance marked as today for the provided date' });
             }
-    
+
             res.status(200).json(empMain);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
     },
-    
+
 
 
     //updateEmployee data
@@ -679,7 +679,7 @@ module.exports = {
             employee.latitude = lat || employee.latitude;
             employee.longitude = long || employee.longitude;
             employee.batteryStatus = batteryStatus || employee.batteryStatus;
-            
+
             await employee.save();
 
             res.status(200).json({ message: 'Current location updated successfully' });
