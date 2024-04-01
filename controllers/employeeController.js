@@ -137,7 +137,8 @@ module.exports = {
             }
 
             // Find employees matching the query
-            const employees = await employeeModel.find(query, '-otp');
+            // const employees = await employeeModel.find(query, '-otp');
+            const employees = await employeeModel.find(query, '-otp').sort({ _id: -1 });
 
             if (!employees || employees.length === 0) { // Check if employees array is empty
                 return res.status(404).json({ message: 'Employees not found' });

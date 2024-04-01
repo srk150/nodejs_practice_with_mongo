@@ -212,7 +212,8 @@ module.exports = {
         query.status = status;
       }
 
-      const taskList = await taskModel.find(query, '-taskAddress');
+      const taskList = await taskModel.find(query, '-taskAddress').sort({created: -1});
+
 
       if (!taskList || taskList.length === 0) { // Check if Task array is empty
         return res.status(404).json({ message: 'Task not found' });
@@ -278,7 +279,10 @@ module.exports = {
         query.status = status;
       }
 
-      const tasks = await taskModel.find(query);
+      // const tasks = await taskModel.find(query);
+
+      const tasks = await taskModel.find(query, '-taskAddress').sort({created: -1});
+
       if (!tasks || tasks.length === 0) {
         return res.status(404).json({ message: 'Tasks not found' });
       }

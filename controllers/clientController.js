@@ -154,9 +154,15 @@ module.exports = {
             // Fetching employees with the given vendorId
             const employees = await employeeModel.find({ vendorId: vendorId });
             const employeeIds = employees.map(employee => employee._id);
+           
+            // const clientList = await clientModel.find({
+            //     vendorId: { $in: [vendorId, ...employeeIds] }
+            // });
+
             const clientList = await clientModel.find({
                 vendorId: { $in: [vendorId, ...employeeIds] }
-            });
+            }).sort({ created: -1 });
+            
 
             // Check if clientList array is empty
             if (!clientList || clientList.length === 0) {
