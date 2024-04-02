@@ -212,14 +212,16 @@ module.exports = {
         query.status = status;
       }
 
-      const taskList = await taskModel.find(query, '-taskAddress').sort({created: -1});
+      const taskList = await taskModel.find(query, '-taskAddress').sort({ created: -1 });
 
 
-      if (!taskList || taskList.length === 0) { // Check if Task array is empty
-        return res.status(404).json({ message: 'Task not found' });
+      if (!taskList || taskList.length === 0) {
+        // If task list is empty or not found
+        return res.status(404).json({ tasks: [] });
+      } else {
+        // If tasks are found
+        return res.status(200).json({ tasks: taskList });
       }
-
-      res.status(200).json(taskList);
 
     } catch (error) {
       console.error('Error fetching all users:', error);
@@ -281,13 +283,15 @@ module.exports = {
 
       // const tasks = await taskModel.find(query);
 
-      const tasks = await taskModel.find(query, '-taskAddress').sort({created: -1});
+      const tasks = await taskModel.find(query, '-taskAddress').sort({ created: -1 });
 
       if (!tasks || tasks.length === 0) {
-        return res.status(404).json({ message: 'Tasks not found' });
+        // If task list is empty or not found
+        return res.status(404).json({ tasks: [] });
+      } else {
+        // If tasks are found
+        return res.status(200).json({ tasks: tasks });
       }
-
-      res.status(200).json(tasks);
 
 
     } catch (error) {

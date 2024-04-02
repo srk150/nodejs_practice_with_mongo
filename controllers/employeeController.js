@@ -737,6 +737,58 @@ module.exports = {
     },
 
 
+    testApiDemo: async (req, res) => {
+        try {
+
+            const { userId, filterDate } = req.body;
+            if (!userId) {
+                return res.status(400).json({ error: 'User id is empty' });
+            }
+
+            const employee = await employeeModel.findById(userId, '-otp');
+            if (!employee) {
+                return res.status(404).json({ error: 'Employee not found' });
+            }
+
+            // const attendance = await attendanceModel.find({ userId: userId, createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const attendanceIn = await attendanceModel.find({ userId: userId, status: "IN", createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            const attendanceOut = await attendanceModel.find({ userId: userId, status: "OUT", createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+
+
+            const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
+            const taskCount = tasks.length; // Count of tasks
+
+            let totalDistance = 0;
+            let totalDuration = 0;
+
+            // const getCheckInOrigin = await attendanceModel.find({ userId: userId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
+            // const getCheckOutOrigin = await attendanceModel.find({ userId: userId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
+            // const checkInRecord = attendance.find(record => record.status === "IN");
+            // const checkOutRecord = attendance.find(record => record.status === "OUT");
+
+            console.log(attendanceIn.length);
+            const allData = [...attendanceIn, ...tasks, ...attendanceOut];
+
+            const response = {
+
+                allData: allData,
+                employee,
+                origin: {
+                    distance: totalDistance,
+                    duration: totalDuration,
+                    taskCount: taskCount
+                }
+            };
+
+            res.status(200).json(response);
+
+
+        } catch (error) {
+            console.error('Error fetching employee--tracking-related data:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
 
 };
 //module.exports end
