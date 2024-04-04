@@ -82,7 +82,7 @@ module.exports = {
         status: "OUT",
         createdAt: createdAt,
       });
-       
+
       await newAttendance.save();
 
       res.status(200).json({ message: 'Attendance checked out successfully' });
@@ -170,32 +170,32 @@ module.exports = {
       if (userStatusCount % 2 === 1) {
         status = "OUT";
       }
-       
 
 
-      if(type =='vendor'){
-         
-        
+
+      if (type == 'vendor') {
+
+
 
         const filter = { _id: userId };
         const updateDoc = {
-            $set: {
-              agoDate: agoDate
-            }
+          $set: {
+            agoDate: agoDate
+          }
         };
 
         const result = await vendorModel.updateOne(filter, updateDoc);
 
 
 
-      }else{
-        
-       
+      } else {
+
+
         const filter = { _id: userId };
         const updateDoc = {
-            $set: {
-              agoDate: agoDate
-            }
+          $set: {
+            agoDate: agoDate
+          }
         };
 
         const result = await employeeModel.updateOne(filter, updateDoc);
@@ -204,7 +204,7 @@ module.exports = {
       }
 
 
-     
+
 
       const newAttendance = new attendanceModel({
         userId,

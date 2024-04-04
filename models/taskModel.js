@@ -35,7 +35,7 @@ const taskSchema = new mongoose.Schema({
 
   empName: {
     type: String,
-   
+
   },
 
 
@@ -45,7 +45,12 @@ const taskSchema = new mongoose.Schema({
   },
 
   taskDate: {
-    type: String,
+    type: Date,
+    default: '',
+  },
+
+  taskEndDate: {
+    type: Date,
     default: '',
   },
 

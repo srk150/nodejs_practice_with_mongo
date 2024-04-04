@@ -756,6 +756,13 @@ module.exports = {
 
 
             const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
+
+            const formattedTaskList = tasks.map(task => ({
+                ...task.toObject(),
+                taskDate: moment(task.taskDate).format('YYYY-MM-DD hh:mm A'),
+                taskEndDate: moment(task.taskEndDate).format('YYYY-MM-DD hh:mm A')
+            }));
+
             const taskCount = tasks.length; // Count of tasks
 
             let totalDistance = 0;
@@ -767,7 +774,7 @@ module.exports = {
             // const checkOutRecord = attendance.find(record => record.status === "OUT");
 
             console.log(attendanceIn.length);
-            const allData = [...attendanceIn, ...tasks, ...attendanceOut];
+            const allData = [...attendanceIn, ...formattedTaskList, ...attendanceOut];
 
             const response = {
 

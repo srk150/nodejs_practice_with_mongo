@@ -189,30 +189,32 @@ module.exports = {
 
       const { status, taskDate } = req.query;
 
-
-      // const taskList = await taskModel.find({ vendorId: vendorId });
       // Fetching employees with the given vendorId
       const employees = await employeeModel.find({ vendorId: vendorId });
       const employeeIds = employees.map(employee => employee._id);
-
-      // const taskList = await taskModel.find({
-      //   vendorId: { $in: [vendorId, ...employeeIds] }
-      // }, '-taskAddress');
 
 
       let query = { vendorId: { $in: [vendorId, ...employeeIds] } };
 
       if (taskDate) {
-        const formattedDate = moment(taskDate).format('YYYY-MM-DD');
-        query.taskDate = { $regex: new RegExp('^' + formattedDate) };
+        const startDate = new Date(taskDate);
+        startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+        const endDate = new Date(taskDate);
+        endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+        query.taskDate = {
+          $gte: startDate,
+          $lt: endDate
+        };
       }
+
 
       // Add status filter if provided
       if (status !== undefined && (status === '0' || status === '1')) {
         query.status = status;
       }
 
-      const taskList = await taskModel.find(query, '-taskAddress').sort({ created: -1 });
+      const taskList = await taskModel.find(query, '-taskAddress').sort({ taskDate: 1 });
 
 
       if (!taskList || taskList.length === 0) {
@@ -220,7 +222,19 @@ module.exports = {
         return res.status(404).json({ tasks: [] });
       } else {
         // If tasks are found
-        return res.status(200).json({ tasks: taskList });
+
+        // Format taskDate before sending the response
+        const formattedTaskList = taskList.map(task => ({
+          ...task.toObject(),
+          taskDate: moment(task.taskDate).format('YYYY-MM-DD hh:mm A'),
+          taskEndDate: moment(task.taskEndDate).format('YYYY-MM-DD hh:mm A')
+        }));
+
+        // If tasks are found
+        return res.status(200).json({ tasks: formattedTaskList });
+
+
+        // return res.status(200).json({ tasks: taskList });
       }
 
     } catch (error) {
@@ -272,8 +286,15 @@ module.exports = {
 
 
       if (taskDate) {
-        const formattedDate = moment(taskDate).format('YYYY-MM-DD');
-        query.taskDate = { $regex: new RegExp('^' + formattedDate) };
+        const startDate = new Date(taskDate);
+        startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+        const endDate = new Date(taskDate);
+        endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+        query.taskDate = {
+          $gte: startDate,
+          $lt: endDate
+        };
       }
 
 
@@ -283,14 +304,24 @@ module.exports = {
 
       // const tasks = await taskModel.find(query);
 
-      const tasks = await taskModel.find(query, '-taskAddress').sort({ created: -1 });
+      const tasks = await taskModel.find(query, '-taskAddress').sort({ taskDate: 1 });
+
 
       if (!tasks || tasks.length === 0) {
         // If task list is empty or not found
         return res.status(404).json({ tasks: [] });
+
       } else {
+
+        // Format taskDate before sending the response
+        const formattedTaskList = taskList.map(task => ({
+          ...task.toObject(),
+          taskDate: moment(task.taskDate).format('YYYY-MM-DD hh:mm A')
+        }));
+
         // If tasks are found
-        return res.status(200).json({ tasks: tasks });
+        return res.status(200).json({ tasks: formattedTaskList });
+
       }
 
 
@@ -417,6 +448,10 @@ module.exports = {
 
         const { taskID, notes, lat, long } = req.body;
 
+        const myDate = new Date();
+        const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+        const taskEndDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+
 
         // Check if any of the properties is empty or falsy
         if (!taskID) {
@@ -453,6 +488,7 @@ module.exports = {
         task.taskAddress = locationGet || task.taskAddress;
         task.location.coordinates[0] = lat || task.location.coordinates[0];
         task.location.coordinates[1] = long || task.location.coordinates[1];
+        task.taskEndDate = taskEndDate || task.taskEndDate;
 
         await task.save();
 
