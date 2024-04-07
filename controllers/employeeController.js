@@ -3,6 +3,8 @@ const attendanceModel = require('../models/attendanceModel');
 const taskModel = require('../models/taskModel');
 const clientModel = require('../models/clientModel');
 const vendorModel = require('../models/vendorModel');
+const trackModel = require('../models/trackModel');
+
 
 const userService = require('../services/userService');
 const jwt = require('jsonwebtoken');
@@ -741,6 +743,8 @@ module.exports = {
         try {
 
             const { userId, filterDate } = req.body;
+
+           
             if (!userId) {
                 return res.status(400).json({ error: 'User id is empty' });
             }
@@ -750,45 +754,46 @@ module.exports = {
                 return res.status(404).json({ error: 'Employee not found' });
             }
 
-            // const attendance = await attendanceModel.find({ userId: userId, createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
-            const attendanceIn = await attendanceModel.find({ userId: userId, status: "IN", createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
-            const attendanceOut = await attendanceModel.find({ userId: userId, status: "OUT", createdAt: filterDate }, '-attnedanceAddress').sort({ attnedanceDate: 1 });
+            let query = { userId: userId };
+
+            if (filterDate) {
+                const startDate = new Date(filterDate);
+                startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+                const endDate = new Date(filterDate);
+                endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+        
+                query.createdAt = {
+                  $gte: startDate,
+                  $lt: endDate
+                };
+              }
+          
+
+            //get new track data from id
+            const trackData = await trackModel.find(query).sort({ createdAt: 1 });
+           
+            if (!trackData || trackData.length === 0) {
+                // If list is empty or not found
+                return res.status(404).json({ "message": "No Data Found", track: [] });
+           
+            } else {
+            
+            trackData.forEach(trackd => {
+
+                const attndanceDate = trackd.createdAt;
+                const userId   = trackd.userId;
+                const taskId   = trackd.taskId;
+                const userType = trackd.userType;
+                const status   = trackd.status;
+                console.log(taskId);
+                
+
+            });
 
 
-            const tasks = await taskModel.find({ userId, status: 1 }, '-taskAddress');
-
-            const formattedTaskList = tasks.map(task => ({
-                ...task.toObject(),
-                taskDate: moment(task.taskDate).format('YYYY-MM-DD hh:mm A'),
-                taskEndDate: moment(task.taskEndDate).format('YYYY-MM-DD hh:mm A')
-            }));
-
-            const taskCount = tasks.length; // Count of tasks
-
-            let totalDistance = 0;
-            let totalDuration = 0;
-
-            // const getCheckInOrigin = await attendanceModel.find({ userId: userId, status: "IN" }).sort({ attnedanceDate: -1 }).limit(1);
-            // const getCheckOutOrigin = await attendanceModel.find({ userId: userId, status: "OUT" }).sort({ attnedanceDate: -1 }).limit(1);
-            // const checkInRecord = attendance.find(record => record.status === "IN");
-            // const checkOutRecord = attendance.find(record => record.status === "OUT");
-
-            console.log(attendanceIn.length);
-            const allData = [...attendanceIn, ...formattedTaskList, ...attendanceOut];
-
-            const response = {
-
-                allData: allData,
-                employee,
-                origin: {
-                    distance: totalDistance,
-                    duration: totalDuration,
-                    taskCount: taskCount
-                }
-            };
-
-            res.status(200).json(response);
-
+            }
+            
+            res.status(200).json("success");
 
         } catch (error) {
             console.error('Error fetching employee--tracking-related data:', error);

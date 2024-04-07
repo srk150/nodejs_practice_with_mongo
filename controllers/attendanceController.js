@@ -1,6 +1,7 @@
 const attendanceModel = require('../models/attendanceModel');
 const vendorModel = require('../models/vendorModel');
 const employeeModel = require('../models/employeeModel');
+const trackModel = require('../models/trackModel');
 
 const axios = require('axios');
 // const moment = require('moment');
@@ -219,7 +220,18 @@ module.exports = {
 
       await newAttendance.save();
 
-      res.status(200).json({ message: 'Attendance added successfully' });
+      //track log inser here
+      const newTrack = new trackModel({
+        userId,
+        userType: type,
+        status,
+        taskId: 0,
+        createdAt: currentDate,
+      })
+      await newTrack.save();
+      // end track log
+      
+      res.status(200).json({ message: 'Attendance ' + status + ' Successfully' });
 
     } catch (error) {
       console.error('Error:', error.message);

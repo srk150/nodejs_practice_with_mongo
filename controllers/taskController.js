@@ -3,6 +3,8 @@ const userService = require('../services/userService');
 const employeeModel = require('../models/employeeModel');
 const vendorModel = require('../models/vendorModel');
 const clientModel = require('../models/clientModel');
+const trackModel = require('../models/trackModel');
+
 
 const axios = require('axios');
 const YOUR_GOOGLE_MAPS_API_KEY = process.env.GMAPAPI;
@@ -491,6 +493,18 @@ module.exports = {
         task.taskEndDate = taskEndDate || task.taskEndDate;
 
         await task.save();
+
+        //track log inser here
+          const newTrack = new trackModel({
+            userId: task.userId,
+            userType: "Task",
+            status: 1,
+            taskId: taskID,
+            createdAt: taskEndDate,
+          })
+          await newTrack.save();
+      // end track log
+      
 
         res.status(200).json({ message: 'Task Done Successfully' });
 
