@@ -316,7 +316,7 @@ module.exports = {
       } else {
 
         // Format taskDate before sending the response
-        const formattedTaskList = taskList.map(task => ({
+        const formattedTaskList = tasks.map(task => ({
           ...task.toObject(),
           taskDate: moment(task.taskDate).format('YYYY-MM-DD hh:mm A')
         }));
@@ -495,16 +495,17 @@ module.exports = {
         await task.save();
 
         //track log inser here
-          const newTrack = new trackModel({
-            userId: task.userId,
-            userType: "Task",
-            status: 1,
-            taskId: taskID,
-            createdAt: taskEndDate,
-          })
-          await newTrack.save();
-      // end track log
-      
+        const newTrack = new trackModel({
+          userId: task.userId,
+          userType: "Task",
+          status: 1,
+          taskId: taskID,
+          attendceId: 0,
+          createdAt: taskEndDate,
+        })
+        await newTrack.save();
+        // end track log
+
 
         res.status(200).json({ message: 'Task Done Successfully' });
 

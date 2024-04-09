@@ -181,7 +181,9 @@ module.exports = {
         const filter = { _id: userId };
         const updateDoc = {
           $set: {
-            agoDate: agoDate
+            agoDate: agoDate,
+            attendanceStatus: status
+
           }
         };
 
@@ -195,7 +197,8 @@ module.exports = {
         const filter = { _id: userId };
         const updateDoc = {
           $set: {
-            agoDate: agoDate
+            agoDate: agoDate,
+            attendanceStatus: status
           }
         };
 
@@ -218,7 +221,8 @@ module.exports = {
         createdAt: createdAt,
       });
 
-      await newAttendance.save();
+      const savedAttendance = await newAttendance.save();
+      const insertedId = savedAttendance._id;
 
       //track log inser here
       const newTrack = new trackModel({
@@ -226,11 +230,12 @@ module.exports = {
         userType: type,
         status,
         taskId: 0,
+        attendceId: insertedId,
         createdAt: currentDate,
       })
       await newTrack.save();
       // end track log
-      
+
       res.status(200).json({ message: 'Attendance ' + status + ' Successfully' });
 
     } catch (error) {

@@ -46,6 +46,12 @@ const vendorSchema = new mongoose.Schema({
         default: '',
     },
 
+    attendanceStatus: {
+        type: String,
+        default: '',
+    },
+
+
     empImg: {
         type: String,
         default: '',

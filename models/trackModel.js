@@ -15,6 +15,12 @@ const trackSchema = new mongoose.Schema({
 
     },
 
+    attendceId: {
+        type: String,
+        required: true,
+
+    },
+
     userType: {
         type: String,
         required: true,
@@ -33,7 +39,7 @@ const trackSchema = new mongoose.Schema({
 
     },
 
-   
+
 }, { versionKey: false });
 
 // Create the asset model
