@@ -739,7 +739,7 @@ module.exports = {
     },
 
 
-    testApiDemo: async (req, res) => {
+    trackEmpRecord: async (req, res) => {
         try {
             const { userId, filterDate } = req.body;
 

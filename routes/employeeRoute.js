@@ -10,7 +10,7 @@ router.put('/update-employee/:userId', employeeController.updateEmployee);
 router.post('/employee-login', employeeController.employeeLogin);
 router.post('/verify', employeeController.verifyOTP);
 router.post('/trackEmployee', employeeController.getEmpTrack);
-router.post('/testApiDemo', employeeController.testApiDemo);
+router.post('/employeeNewTracking', employeeController.trackEmpRecord);
 router.delete('/delete/:userId', employeeController.empDelete);
 router.post('/current-location', employeeController.currentLocation);
 router.get('/clientlist/:userId', employeeController.clientList);

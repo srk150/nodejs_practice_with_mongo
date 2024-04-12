@@ -5,6 +5,7 @@ const licenceModel = require('../models/licenceModel');
 const employeeModel = require('../models/employeeModel');
 const attendanceModel = require('../models/attendanceModel');
 const taskModel = require('../models/taskModel');
+const trackModel = require('../models/trackModel');
 
 
 const userService = require('../services/userService');
@@ -595,6 +596,136 @@ module.exports = {
 
     },
 
+
+    trackVendorNewRecord: async (req, res) => {
+        try {
+            const { userId, filterDate } = req.body;
+
+            if (!userId) {
+                return res.status(400).json({ error: 'Vendor id is empty' });
+            }
+
+            const vendor = await vendorModel.findById(userId, '-vandorOtp');
+            if (!vendor) {
+                return res.status(404).json({ error: 'Vendor not found' });
+            }
+
+
+            const tasksCount = await taskModel.find({ userId: userId, status: 1 }, '-taskAddress');
+            const taskCount = tasksCount.length; // Count of tasks
+
+
+            let query = { userId: userId };
+
+            if (filterDate) {
+                const startDate = new Date(filterDate);
+                startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+                const endDate = new Date(filterDate);
+                endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+                query.createdAt = {
+                    $gte: startDate,
+                    $lt: endDate
+                };
+            }
+             
+            const trackData = await trackModel.find(query).sort({ createdAt: 1 });
+
+            let mergedDetails = [];
+
+            if (!trackData || trackData.length === 0) {
+                return res.status(404).json({ message: "No Data Found", track: [] });
+            }
+
+            for (let i = 0; i < trackData.length; i++) {
+                const trackd = trackData[i];
+                const userType = trackd.userType;
+                const userId = trackd.userId;
+                const status = trackd.status;
+                const taskId = trackd.taskId;
+                const attendceId = trackd.attendceId;
+
+
+                if (userId && userType === 'vendor' && status === 'IN' && attendceId != '0') {
+                    // const attDetailIn = await attendanceModel.findOne({ userId, status: 'IN' }).sort({ _id: -1 });
+                    const attDetailIn = await attendanceModel.findOne({ _id: attendceId });
+                    if (attDetailIn) {
+                        mergedDetails.push(attDetailIn);
+                    }
+                }
+
+                if (taskId && taskId != '0') {
+                    const taskData = await taskModel.findOne({ _id: taskId });
+
+                    if (taskData) {
+
+                        const formattedTask = {
+                            ...taskData.toObject(),
+                            taskDate: moment(taskData.taskDate).format('YYYY-MM-DD hh:mm A'),
+                            taskEndDate: moment(taskData.taskEndDate).format('YYYY-MM-DD hh:mm A')
+                        };
+
+                        mergedDetails.push(formattedTask);
+                    }
+                }
+
+                if (userId && userType === 'vendor' && status === 'OUT' && attendceId != '0') {
+
+                    const attDetailout = await attendanceModel.findOne({ _id: attendceId });
+
+                    if (attDetailout) {
+                        mergedDetails.push(attDetailout);
+                    }
+                }
+            }
+
+            //calculate distance duration from track start
+            let totalDistance = 0;
+            let totalDuration = 0;
+         
+            if(trackData.length > 0){
+            
+                for (let i = 0; i < trackData.length - 1; i++) {
+                    
+                    const originLat = trackData[i].lat;
+                    const originLong = trackData[i].long;
+                    const destinationLat = trackData[i + 1].lat;
+                    const destinationLong = trackData[i + 1].long;
+
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const resultDistance = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance += parseFloat(resultDistance.data.rows[0].elements[0].distance.text);
+                    totalDuration += parseFloat(resultDistance.data.rows[0].elements[0].duration.text);
+
+                }
+            }
+
+            //calculate distance duration from track end
+
+            const response = {
+                vendor: vendor,
+                track: mergedDetails,
+                origin: {
+                    distance: totalDistance,
+                    duration: totalDuration,
+                    taskCount: taskCount
+                }
+            };
+
+
+            return res.status(200).json({ message: "Success", response });
+        } catch (error) {
+            console.error('Error fetching -related data:', error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    }
 
 
 };
