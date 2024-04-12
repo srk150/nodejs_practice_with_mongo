@@ -785,7 +785,15 @@ module.exports = {
                 const taskId   = trackd.taskId;
                 const userType = trackd.userType;
                 const status   = trackd.status;
-                console.log(taskId);
+               
+                // let Inattendace = '';
+
+                if(userId && userType =="employee" && status == "IN"){
+                    const Inattendace = await attendanceModel.findById(userId, status: "IN", '-attnedanceAddress');
+
+                console.log(Inattendace);
+
+                }
                 
 
             });
