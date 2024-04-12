@@ -741,10 +741,8 @@ module.exports = {
 
     testApiDemo: async (req, res) => {
         try {
-
             const { userId, filterDate } = req.body;
 
-           
             if (!userId) {
                 return res.status(400).json({ error: 'User id is empty' });
             }
@@ -761,53 +759,70 @@ module.exports = {
                 startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
                 const endDate = new Date(filterDate);
                 endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
-        
+
                 query.createdAt = {
-                  $gte: startDate,
-                  $lt: endDate
+                    $gte: startDate,
+                    $lt: endDate
                 };
-              }
-          
-
-            //get new track data from id
-            const trackData = await trackModel.find(query).sort({ createdAt: 1 });
-           
-            if (!trackData || trackData.length === 0) {
-                // If list is empty or not found
-                return res.status(404).json({ "message": "No Data Found", track: [] });
-           
-            } else {
-            
-            trackData.forEach(trackd => {
-
-                const attndanceDate = trackd.createdAt;
-                const userId   = trackd.userId;
-                const taskId   = trackd.taskId;
-                const userType = trackd.userType;
-                const status   = trackd.status;
-               
-                // let Inattendace = '';
-
-                if(userId && userType =="employee" && status == "IN"){
-                    const Inattendace = await attendanceModel.findById(userId, status: "IN", '-attnedanceAddress');
-
-                console.log(Inattendace);
-
-                }
-                
-
-            });
-
-
             }
-            
-            res.status(200).json("success");
 
+            const trackData = await trackModel.find(query).sort({ createdAt: 1 });
+
+            let mergedDetails = [];
+
+            if (!trackData || trackData.length === 0) {
+                return res.status(404).json({ message: "No Data Found", track: [] });
+            }
+
+            for (let i = 0; i < trackData.length; i++) {
+                const trackd = trackData[i];
+                const userType = trackd.userType;
+                const userId = trackd.userId;
+                const status = trackd.status;
+                const taskId = trackd.taskId;
+                const attendceId = trackd.attendceId;
+
+
+                if (userId && userType === 'employee' && status === 'IN' && attendceId != '0') {
+                    // const attDetailIn = await attendanceModel.findOne({ userId, status: 'IN' }).sort({ _id: -1 });
+                    const attDetailIn = await attendanceModel.findOne({ _id: attendceId });
+                    if (attDetailIn) {
+                        mergedDetails.push(attDetailIn);
+                    }
+                }
+
+                if (taskId && taskId != '0') {
+                    const taskData = await taskModel.findOne({ _id: taskId });
+
+                    if (taskData) {
+
+                        const formattedTask = {
+                            ...taskData.toObject(),
+                            taskDate: moment(taskData.taskDate).format('YYYY-MM-DD hh:mm A'),
+                            taskEndDate: moment(taskData.taskEndDate).format('YYYY-MM-DD hh:mm A')
+                        };
+
+                        mergedDetails.push(formattedTask);
+                    }
+                }
+
+                if (userId && userType === 'employee' && status === 'OUT' && attendceId != '0') {
+                    // const attDetailout = await attendanceModel.findOne({ userId, status: 'OUT' }).sort({ _id: -1 });
+                    const attDetailout = await attendanceModel.findOne({ _id: attendceId });
+
+                    if (attDetailout) {
+                        mergedDetails.push(attDetailout);
+                    }
+                }
+            }
+
+            return res.status(200).json({ message: "Success", track: mergedDetails });
         } catch (error) {
-            console.error('Error fetching employee--tracking-related data:', error);
+            console.error('Error fetching -related data:', error);
             res.status(500).json({ message: 'Internal Server Error' });
         }
-    },
+    }
+
 
 
 };

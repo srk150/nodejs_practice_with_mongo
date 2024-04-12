@@ -51,11 +51,16 @@ const empSchema = new mongoose.Schema({
         default: '',
     },
 
+    attendanceStatus: {
+        type: String,
+        default: '',
+    },
+
     batteryStatus: {
         type: String,
         default: '',
     },
-    
+
 
     otp: {
         type: String,
