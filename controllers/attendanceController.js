@@ -230,6 +230,8 @@ module.exports = {
         userType: type,
         status,
         taskId: 0,
+        lat: lat,
+        long: long,
         attendceId: insertedId,
         createdAt: currentDate,
       })

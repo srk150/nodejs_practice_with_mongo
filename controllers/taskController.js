@@ -501,6 +501,8 @@ module.exports = {
           status: 1,
           taskId: taskID,
           attendceId: 0,
+          lat: lat,
+          long: long,
           createdAt: taskEndDate,
         })
         await newTrack.save();

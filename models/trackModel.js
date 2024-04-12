@@ -27,6 +27,19 @@ const trackSchema = new mongoose.Schema({
 
     },
 
+    lat: {
+        type: String,
+        required: true,
+
+    },
+
+
+    long: {
+        type: String,
+        required: true,
+
+    },
+
     status: {
         type: String,
         required: true,

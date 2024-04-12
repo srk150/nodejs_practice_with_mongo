@@ -748,6 +748,10 @@ module.exports = {
             }
 
             const employee = await employeeModel.findById(userId, '-otp');
+
+            const tasksCount = await taskModel.find({ userId: userId, status: 1 }, '-taskAddress');
+            const taskCount = tasksCount.length; // Count of tasks
+
             if (!employee) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
@@ -816,7 +820,48 @@ module.exports = {
                 }
             }
 
-            return res.status(200).json({ message: "Success", track: mergedDetails });
+            //calculate distance duration from track start
+            let totalDistance = 0;
+            let totalDuration = 0;
+         
+            if(trackData.length > 0){
+            
+                for (let i = 0; i < trackData.length - 1; i++) {
+                    
+                    const originLat = trackData[i].lat;
+                    const originLong = trackData[i].long;
+                    const destinationLat = trackData[i + 1].lat;
+                    const destinationLong = trackData[i + 1].long;
+
+
+                    const locationInLatLong = originLat + ',' + originLong;
+                    const locationOutLatLong = destinationLat + ',' + destinationLong;
+
+                    const originCoords = await userService.parseCoordinates(locationInLatLong);
+                    const destinationCoords = await userService.parseCoordinates(locationOutLatLong);
+
+                    const resultDistance = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+                    totalDistance += parseFloat(resultDistance.data.rows[0].elements[0].distance.text);
+                    totalDuration += parseFloat(resultDistance.data.rows[0].elements[0].duration.text);
+
+                }
+            }
+
+            //calculate distance duration from track end
+
+            const response = {
+                employee: employee,
+                track: mergedDetails,
+                origin: {
+                    distance: totalDistance,
+                    duration: totalDuration,
+                    taskCount: taskCount
+                }
+            };
+
+
+            return res.status(200).json({ message: "Success", response });
         } catch (error) {
             console.error('Error fetching -related data:', error);
             res.status(500).json({ message: 'Internal Server Error' });
