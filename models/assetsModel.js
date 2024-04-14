@@ -5,40 +5,46 @@ const assetsSchema = new mongoose.Schema({
 
     vendorId: {
         type: String,
-        required: true,
+        default: '',
+
+    },
+
+    userId: {
+        type: String,
+        default: '',
 
     },
 
     assetName: {
         type: String,
-        required: true,
+        default: '',
 
     },
 
     vendorName: {
         type: String,
-        required: true,
+        default: '',
 
     },
 
     model: {
         type: String,
-        required: true,
+        default: '',
     },
 
     mobileNumber: {
         type: String,
-        required: true,
+        default: '',
     },
 
     lastServiceDate: {
         type: String,
-        required: true,
+        default: '',
     },
 
     nextServiceDate: {
         type: String,
-        required: true,
+        default: '',
     },
 
 
@@ -46,6 +52,25 @@ const assetsSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+
+    createdBy: {
+        type: String,
+        default: '',
+
+    },
+
+
+    createdAt: {
+        type: String,
+        default: '',
+    },
+
+    type: {
+        type: String,
+        default: '',
+
+    },
+
 
     status: {
         type: String,

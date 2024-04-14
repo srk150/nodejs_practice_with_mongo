@@ -9,6 +9,11 @@ const reimbrushSchema = new mongoose.Schema({
 
     },
 
+    userId: {
+        type: String,
+        default: '',
+      },
+
     reimbDate: {
         type: String,
         default: '',

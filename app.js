@@ -42,6 +42,8 @@ const clientRoutes = require('./routes/clientRoutes');
 const EmpRoutes = require('./routes/employeeRoute');
 const vendorRoute = require('./routes/vendorRoute');
 const reimbrushRoute = require('./routes/reimbrushRoute');
+const assetsRoute = require('./routes/assetsRoute');
+const licenseRoute = require('./routes/licenseRoute');
 
 // Set base URL
 const baseRoute = '/api';
@@ -64,6 +66,8 @@ app.use(`${baseRoute}/client`, clientRoutes);
 app.use(`${baseRoute}/employee`, EmpRoutes);
 app.use(`${baseRoute}/vendor`, vendorRoute);
 app.use(`${baseRoute}/reimbrushment`, reimbrushRoute);
+app.use(`${baseRoute}/asset`, assetsRoute);
+app.use(`${baseRoute}/license`, licenseRoute);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

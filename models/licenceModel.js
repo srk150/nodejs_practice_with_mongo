@@ -9,6 +9,11 @@ const licenceSchema = new mongoose.Schema({
 
     },
 
+    userId: {
+        type: String,
+        default: '',
+      },
+
     licenceName: {
         type: String,
         required: true,
@@ -44,6 +49,24 @@ const licenceSchema = new mongoose.Schema({
     licenceDocument: {
         type: String,
         default: '',
+    },
+
+    createdBy: {
+        type: String,
+        default: '',
+
+    },
+
+
+    createdAt: {
+        type: String,
+        default: '',
+    },
+
+    type: {
+        type: String,
+        default: '',
+
     },
 
     status: {
