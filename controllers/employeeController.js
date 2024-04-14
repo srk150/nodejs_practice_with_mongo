@@ -842,8 +842,23 @@ module.exports = {
 
                     const resultDistance = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
 
-                    totalDistance += parseFloat(resultDistance.data.rows[0].elements[0].distance.text);
-                    totalDuration += parseFloat(resultDistance.data.rows[0].elements[0].duration.text);
+                    if (
+                        resultDistance &&
+                        resultDistance.data &&
+                        resultDistance.data.rows &&
+                        resultDistance.data.rows.length > 0 &&
+                        resultDistance.data.rows[0].elements &&
+                        resultDistance.data.rows[0].elements.length > 0 &&
+                        resultDistance.data.rows[0].elements[0].distance &&
+                        resultDistance.data.rows[0].elements[0].distance.text &&
+                        resultDistance.data.rows[0].elements[0].duration &&
+                        resultDistance.data.rows[0].elements[0].duration.text
+                    ) {
+                        totalDistance += parseFloat(resultDistance.data.rows[0].elements[0].distance.text);
+                        totalDuration += parseFloat(resultDistance.data.rows[0].elements[0].duration.text);
+                    }
+                    // totalDistance += parseFloat(resultDistance.data.rows[0].elements[0].distance.text);
+                    // totalDuration += parseFloat(resultDistance.data.rows[0].elements[0].duration.text);
 
                 }
             }
