@@ -208,7 +208,7 @@ module.exports = {
 
             const { fullname, mobile, userType, machineNumber, workLocation } = req.body;
 
-            if (!fullname || !mobile || !userType) {
+            if (!fullname || !mobile) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
 
@@ -823,11 +823,11 @@ module.exports = {
             //calculate distance duration from track start
             let totalDistance = 0;
             let totalDuration = 0;
-         
-            if(trackData.length > 0){
-            
+
+            if (trackData.length > 0) {
+
                 for (let i = 0; i < trackData.length - 1; i++) {
-                    
+
                     const originLat = trackData[i].lat;
                     const originLong = trackData[i].long;
                     const destinationLat = trackData[i + 1].lat;

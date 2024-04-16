@@ -72,16 +72,18 @@ module.exports = {
                 const existingMobile = await clientModel.findOne({ clientMobile });
 
                 let createdBy = '';
+                let createdByImg = '';
                 if (type == 'vendor') {
 
                     const existingvendor = await vendorModel.findOne({ _id: vendorId });
 
                     createdBy = existingvendor.vendorName;
-
+                    createdByImg = existingvendor.empImg;
                 } else if (type == 'employee') {
 
-                    const existingvendor = await employeeModel.findOne({ _id: vendorId });
-                    createdBy = existingvendor.fullname;
+                    const existingEmp = await employeeModel.findOne({ _id: vendorId });
+                    createdBy = existingEmp.fullname;
+                    createdByImg = existingEmp.empImg;
 
                 }
 
@@ -118,6 +120,7 @@ module.exports = {
                     clientZip,
                     vendorId,
                     createdBy,
+                    createdByImg,
                     type,
                     clientLocation: {
                         type: 'Point',
@@ -154,7 +157,7 @@ module.exports = {
             // Fetching employees with the given vendorId
             const employees = await employeeModel.find({ vendorId: vendorId });
             const employeeIds = employees.map(employee => employee._id);
-           
+
             // const clientList = await clientModel.find({
             //     vendorId: { $in: [vendorId, ...employeeIds] }
             // });
@@ -162,7 +165,7 @@ module.exports = {
             const clientList = await clientModel.find({
                 vendorId: { $in: [vendorId, ...employeeIds] }
             }).sort({ created: -1 });
-            
+
 
             // Check if clientList array is empty
             if (!clientList || clientList.length === 0) {
@@ -276,16 +279,19 @@ module.exports = {
 
 
                 let createdBy = '';
+                let createdByImg = '';
                 if (type == 'vendor') {
 
                     const existingvendor = await vendorModel.findOne({ _id: vendorId });
 
                     createdBy = existingvendor.vendorName;
-
+                    createdByImg = existingvendor.empImg;
                 } else if (type == 'employee') {
 
                     const existingvendor = await employeeModel.findOne({ _id: vendorId });
                     createdBy = existingvendor.fullname;
+                    createdByImg = existingvendor.empImg;
+
 
                 }
 
@@ -312,7 +318,8 @@ module.exports = {
                 Client.vendorId = vendorId || Client.vendorId;
                 Client.type = type || Client.type;
                 Client.createdBy = createdBy || Client.createdBy;
-                
+                Client.createdByImg = createdByImg || Client.createdByImg;
+
                 await Client.save();
 
                 res.status(200).json({ message: 'Client updated successfully' });

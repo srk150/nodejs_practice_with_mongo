@@ -62,6 +62,11 @@ const clientSchema = new mongoose.Schema({
         default: '',
     },
 
+    createdByImg: {
+        type: String,
+        default: '',
+    },
+
     type: {
         type: String,
         default: '',
