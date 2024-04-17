@@ -562,6 +562,9 @@ module.exports = {
 
                 if (req.file) {
                     uploadedFile = "images/" + req.file.filename;
+                }else{
+                    uploadedFile = "images/avtar.png";
+
                 }
 
                 if (type == 'vendor') {
