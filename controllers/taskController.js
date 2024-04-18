@@ -471,6 +471,36 @@ module.exports = {
           return res.status(400).json({ error: 'Task is not found' });
         }
 
+        // Check range
+        // Get coordinates of the task
+        const taskCoords = `${task.location.coordinates[0]},${task.location.coordinates[1]}`;
+        const myCoords = `${lat},${long}`;
+
+        // Calculate distance using your userService
+
+        const originCoords = await userService.parseCoordinates(myCoords);
+        const destinationCoords = await userService.parseCoordinates(taskCoords);
+
+        const result = await userService.calculateDistanceAndDuration(originCoords, destinationCoords);
+
+        const distance = result.data.rows[0].elements[0].distance.text;
+
+        let distanceInMeters;
+
+        if (distance.includes('km')) {
+          // Extract kilometers and convert to meters
+          distanceInMeters = parseFloat(distance.split(' ')[0]) * 1000; // Extract "6.0", convert to float, multiply by 1000
+        } else {
+          // Extract meters
+          distanceInMeters = parseInt(distance.split(' ')[0]); // Extract "59", convert to integer
+        }
+
+
+        if (distanceInMeters > 300) {
+          return res.status(403).json({ error: 'You are not within 300 meters range of the task location' });
+        }
+        // range 300meter
+
 
         // Check if file was provided
         let uploadedFile = '';
