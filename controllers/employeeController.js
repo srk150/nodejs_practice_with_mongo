@@ -83,7 +83,7 @@ module.exports = {
             }
 
             // Find employees matching the query
-            const employees = await employeeModel.find(query, '-otp');
+            const employees = await employeeModel.find(query, '-otp').sort({ _id: -1 });
 
             if (!employees || employees.length === 0) { // Check if employees array is empty
                 return res.status(404).json({ message: 'Employees not found' });
@@ -749,9 +749,7 @@ module.exports = {
 
             const employee = await employeeModel.findById(userId, '-otp');
 
-            const tasksCount = await taskModel.find({ userId: userId, status: 1 }, '-taskAddress');
-            const taskCount = tasksCount.length; // Count of tasks
-
+           
             if (!employee) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
@@ -770,12 +768,31 @@ module.exports = {
                 };
             }
 
+            // task count
+            let query2 = { userId: userId, status: 1 };
+
+            if (filterDate) {
+                const startDate = new Date(filterDate);
+                startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+                const endDate = new Date(filterDate);
+                endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+                query2.taskEndDate = {
+                    $gte: startDate,
+                    $lt: endDate
+                };
+            }
+            
+            const tasksCount = await taskModel.find(query2, '-taskAddress');
+            const taskCount = tasksCount.length; // Count of tasks
+            // task count
+
             const trackData = await trackModel.find(query).sort({ createdAt: 1 });
 
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [] });
+                return res.status(404).json({ message: "No Data Found", track: [], employee:employee });
             }
 
             for (let i = 0; i < trackData.length; i++) {

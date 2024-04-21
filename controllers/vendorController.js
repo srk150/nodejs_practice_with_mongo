@@ -614,10 +614,6 @@ module.exports = {
             }
 
 
-            const tasksCount = await taskModel.find({ userId: userId, status: 1 }, '-taskAddress');
-            const taskCount = tasksCount.length; // Count of tasks
-
-
             let query = { userId: userId };
 
             if (filterDate) {
@@ -632,12 +628,33 @@ module.exports = {
                 };
             }
              
+
+            //task count by 
+            let query2 = { userId: userId, status: 1 };
+
+            if (filterDate) {
+                const startDate = new Date(filterDate);
+                startDate.setUTCHours(0, 0, 0, 0); // Set to the start of the day
+                const endDate = new Date(filterDate);
+                endDate.setUTCHours(23, 59, 59, 999); // Set to the end of the day
+
+                query2.taskEndDate = {
+                    $gte: startDate,
+                    $lt: endDate
+                };
+            }
+
+            const tasksCount = await taskModel.find(query2, '-taskAddress');
+            const taskCount = tasksCount.length; // Count of tasks
+
+
+            //count date
             const trackData = await trackModel.find(query).sort({ createdAt: 1 });
 
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [] });
+                return res.status(404).json({ message: "No Data Found", track: [], vendor:vendor });
             }
 
             for (let i = 0; i < trackData.length; i++) {
