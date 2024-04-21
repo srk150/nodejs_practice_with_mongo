@@ -182,14 +182,14 @@ module.exports = {
         const updateDoc = {
           $set: {
             agoDate: agoDate,
-            attendanceStatus: status
+            attendanceStatus: status,
+            vandorLat: lat,
+            vandorLong: long
 
           }
         };
 
         const result = await vendorModel.updateOne(filter, updateDoc);
-
-
 
       } else {
 
@@ -198,7 +198,9 @@ module.exports = {
         const updateDoc = {
           $set: {
             agoDate: agoDate,
-            attendanceStatus: status
+            attendanceStatus: status,
+            latitude: lat,
+            longitude: long
           }
         };
 
