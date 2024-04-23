@@ -64,39 +64,6 @@ module.exports = {
 
 
 
-    // Employee list api
-    getEmpList: async (req, res) => {
-        try {
-            const { vendorId } = req.params;
-            const { empName } = req.query;
-
-            // const employees = await employeeModel.find({ vendorId: vendorId }, '-otp');
-            // if (!employees || employees.length === 0) { // Check if employees array is empty
-            //     return res.status(404).json({ message: 'Employees not found' });
-            // }
-            // res.status(200).json(employees);
-
-            let query = { vendorId: vendorId };
-
-            if (empName) {
-                query.fullname = { $regex: empName, $options: 'i' }; // Case-insensitive search
-            }
-
-            // Find employees matching the query
-            const employees = await employeeModel.find(query, '-otp').sort({ _id: -1 });
-
-            if (!employees || employees.length === 0) { // Check if employees array is empty
-                return res.status(404).json({ message: 'Employees not found' });
-            }
-
-            res.status(200).json(employees);
-
-
-        } catch (error) {
-            console.error('Error fetching all employees:', error);
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
-    },
 
 
 
@@ -140,7 +107,7 @@ module.exports = {
 
             // Find employees matching the query
             // const employees = await employeeModel.find(query, '-otp');
-            const employees = await employeeModel.find(query, '-otp').sort({ _id: -1 });
+            const employees = await employeeModel.find(query, '-otp').sort({ _id: 1 });
 
             if (!employees || employees.length === 0) { // Check if employees array is empty
                 return res.status(404).json({ message: 'Employees not found' });
@@ -749,7 +716,7 @@ module.exports = {
 
             const employee = await employeeModel.findById(userId, '-otp');
 
-           
+
             if (!employee) {
                 return res.status(404).json({ error: 'Employee not found' });
             }
@@ -782,7 +749,7 @@ module.exports = {
                     $lt: endDate
                 };
             }
-            
+
             const tasksCount = await taskModel.find(query2, '-taskAddress');
             const taskCount = tasksCount.length; // Count of tasks
             // task count
@@ -792,7 +759,7 @@ module.exports = {
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [], employee:employee });
+                return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
             }
 
             for (let i = 0; i < trackData.length; i++) {
