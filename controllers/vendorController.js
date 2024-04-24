@@ -217,6 +217,15 @@ module.exports = {
             // Save the updated user to the database
             await vendor.save();
 
+            //employee update company
+            const employee = await employeeModel.find({ vendorId: vendorId });
+
+            // 2. Update each user's company name
+            for (let i = 0; i < employee.length; i++) {
+                employee[i].companyName = vendorCompany;
+                await employee[i].save(); // Save the updated user profile
+            }
+
             res.status(200).json({ message: 'Profile updated successfully' });
         } catch (error) {
             console.error(error);
@@ -562,7 +571,7 @@ module.exports = {
 
                 if (req.file) {
                     uploadedFile = "images/" + req.file.filename;
-                }else{
+                } else {
                     uploadedFile = "images/avtar.png";
 
                 }
@@ -627,7 +636,7 @@ module.exports = {
                     $lt: endDate
                 };
             }
-             
+
 
             //task count by 
             let query2 = { userId: userId, status: 1 };
@@ -654,7 +663,7 @@ module.exports = {
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [], vendor:vendor });
+                return res.status(404).json({ message: "No Data Found", track: [], vendor: vendor });
             }
 
             for (let i = 0; i < trackData.length; i++) {
@@ -702,11 +711,11 @@ module.exports = {
             //calculate distance duration from track start
             let totalDistance = 0;
             let totalDuration = 0;
-         
-            if(trackData.length > 0){
-            
+
+            if (trackData.length > 0) {
+
                 for (let i = 0; i < trackData.length - 1; i++) {
-                    
+
                     const originLat = trackData[i].lat;
                     const originLong = trackData[i].long;
                     const destinationLat = trackData[i + 1].lat;
