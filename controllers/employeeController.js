@@ -759,7 +759,23 @@ module.exports = {
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
+               
+                // return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
+                
+                const response22 = {
+                    employee: employee,
+                    track: [],
+                    origin: {
+                        distance: 0,
+                        duration: 0,
+                        taskCount: 0
+                    }
+                };
+    
+    
+                return res.status(404).json({ message: "No Data Found", response22 });
+            
+           
             }
 
             for (let i = 0; i < trackData.length; i++) {

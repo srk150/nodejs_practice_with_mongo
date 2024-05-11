@@ -283,7 +283,6 @@ module.exports = {
 
       if (userAttendence.status == "IN") {
 
-
         // check if date time before 11.59
         const currentDatefor = new Date();
         const currentHour = currentDatefor.getHours(); // Get the current hour (0-23)
