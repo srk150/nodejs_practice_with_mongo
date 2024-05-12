@@ -144,7 +144,13 @@ module.exports = {
             const userIdsfilterby = emp.map(employee => employee._id);
 
             // Find attendance for users with those IDs for the provided date and status 'IN'
+             if(attandance_status == 'all'){
+            const attendanceList = await attendanceModel.find({ userId: { $in: userIdsfilterby }, createdAt: { $gte: providedDate, $lt: moment(providedDate).add(1, 'day').format('YYYY-MM-DD') } });
+
+             }else{
             const attendanceList = await attendanceModel.find({ userId: { $in: userIdsfilterby }, status: attandance_status, createdAt: { $gte: providedDate, $lt: moment(providedDate).add(1, 'day').format('YYYY-MM-DD') } });
+
+             }
 
             const userIdsfilterbyatt = attendanceList.map(employee => employee.userId);
 
