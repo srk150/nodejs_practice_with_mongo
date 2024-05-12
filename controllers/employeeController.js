@@ -762,7 +762,7 @@ module.exports = {
                
                 // return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
                 
-                const response22 = {
+                const response = {
                     employee: employee,
                     track: [],
                     origin: {
@@ -773,7 +773,7 @@ module.exports = {
                 };
     
     
-                return res.status(404).json({ message: "No Data Found", response22 });
+                return res.status(404).json({ message: "No Data Found", response });
             
            
             }

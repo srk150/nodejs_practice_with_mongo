@@ -665,7 +665,7 @@ module.exports = {
             if (!trackData || trackData.length === 0) {
                 // return res.status(404).json({ message: "No Data Found", track: [], vendor: vendor });
            
-                const response2 = {
+                const response = {
                     vendor: vendor,
                     track: [],
                     origin: {
@@ -675,7 +675,7 @@ module.exports = {
                     }
                 };
 
-            return res.status(404).json({ message: "No Data Found", response2 });
+            return res.status(404).json({ message: "No Data Found", response });
            
             }
 
