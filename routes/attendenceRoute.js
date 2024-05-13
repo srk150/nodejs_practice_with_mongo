@@ -8,6 +8,6 @@ router.post('/check-out', attendanceController.checkOut);
 router.post('/attendance-api', attendanceController.attendanceInOut);
 router.get('/list/:userId', attendanceController.allAttendece);
 router.post('/distance', attendanceController.getDuration);
-router.post('/autolog', attendanceController.autologOut);
+router.get('/autolog', attendanceController.autologOut);
 
 module.exports = router;

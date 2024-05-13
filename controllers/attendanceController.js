@@ -264,117 +264,93 @@ module.exports = {
   autologOut: async (req, res) => {
     try {
 
-      const { userId, type } = req.body;
-
-      // Check if any one empty
-      if (!userId || !type) {
-        return res.status(400).json({ error: 'One or more fields are empty' });
-      }
-
-      const myDate = new Date();
-
-      const currentDateIST = moment.tz(myDate, 'Asia/Kolkata');
+      const currentDateIST = moment.tz(new Date(), 'Asia/Kolkata');
       const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
       const createdAt = currentDateIST.format('YYYY-MM-DD');
 
       const agoDate = new Date().toISOString();
 
-      const userAttendence = await attendanceModel.findOne({ userId: userId, createdAt: createdAt }).sort({ _id: -1 }).exec();
+      const userAttendances = await attendanceModel.find({ createdAt: createdAt, status: "IN" }).sort({ _id: -1 });
 
-      if (userAttendence.status == "IN") {
+      if (userAttendances && userAttendances.length > 0) {
 
+        for (const attendance of userAttendances) {
+          if (attendance && attendance.status == 'IN') {
 
-        // check if date time before 11.59
-        const currentDatefor = new Date();
-        const currentHour = currentDatefor.getHours(); // Get the current hour (0-23)
-        const currentMinute = currentDatefor.getMinutes(); // Get the current minute (0-59)
+            // Check if time is 11:59 PM
+            const currentHour = currentDateIST.hours(); // Get the current hour (0-23)
+            const currentMinute = currentDateIST.minutes(); // Get the current minute (0-59)
 
-        // Check if the current time is 11:59 PM
-        if (currentHour === 23 && currentMinute === 59) {
+            // if (currentHour === 23 && currentMinute === 59) {
+            const status = "OUT";
 
+            if (attendance.type === 'vendor') {
+              // Update vendor attendance
+              await vendorModel.updateOne({ _id: attendance.userId }, {
+                $set: {
+                  agoDate: agoDate,
+                  attendanceStatus: status,
+                  vandorLat: 0,
+                  vandorLong: 0
+                }
+              });
+            } else {
+              // Update employee attendance
+              await employeeModel.updateOne({ _id: attendance.userId }, {
+                $set: {
+                  agoDate: agoDate,
+                  attendanceStatus: status,
+                  latitude: 0,
+                  longitude: 0
+                }
+              });
+            }
 
-          let status = "OUT";
+            // Create new attendance record
+            const newAttendance = new attendanceModel({
+              userId: attendance.userId,
+              type: attendance.type,
+              attnedanceDate: currentDate,
+              attnedanceLat: 0,
+              attnedanceLong: 0,
+              attnedanceAddress: "0",
+              status,
+              createdAt: createdAt,
+            });
 
-          if (type == 'vendor') {
+            const savedAttendance = await newAttendance.save();
+            const insertedId = savedAttendance._id;
 
-            const filter = { _id: userId };
-            const updateDoc = {
-              $set: {
-                agoDate: agoDate,
-                attendanceStatus: status,
-                vandorLat: 0,
-                vandorLong: 0
-
-              }
-            };
-
-            const result = await vendorModel.updateOne(filter, updateDoc);
-
-          } else {
-
-
-            const filter = { _id: userId };
-            const updateDoc = {
-              $set: {
-                agoDate: agoDate,
-                attendanceStatus: status,
-                latitude: 0,
-                longitude: 0
-              }
-            };
-
-            const result = await employeeModel.updateOne(filter, updateDoc);
-
+            // Track log insertion
+            const newTrack = new trackModel({
+              userId: attendance.userId,
+              userType: attendance.type,
+              status,
+              taskId: 0,
+              lat: 0,
+              long: 0,
+              attendceId: insertedId,
+              createdAt: currentDate,
+            });
+            await newTrack.save();
 
           }
-
-
-          const newAttendance = new attendanceModel({
-            userId,
-            type,
-            attnedanceDate: currentDate,
-            attnedanceLat: 0,
-            attnedanceLong: 0,
-            attnedanceAddress: "0",
-            status,
-            createdAt: createdAt,
-          });
-
-          const savedAttendance = await newAttendance.save();
-          const insertedId = savedAttendance._id;
-
-          //track log inser here
-          const newTrack = new trackModel({
-            userId,
-            userType: type,
-            status,
-            taskId: 0,
-            lat: 0,
-            long: 0,
-            attendceId: insertedId,
-            createdAt: currentDate,
-          })
-          await newTrack.save();
-          // end track log
-
-          res.status(200).json({ message: 'Attendance Auto Logout Successfully' });
-
-        } else {
-
-          res.status(500).json({ error: 'Befor 11:59, You can not auto logout' });
-
         }
+        // Send response after inserting new entries
+        res.status(200).json({ message: 'Attendance Auto Logout Successfully' });
 
       } else {
-
-        res.status(500).json({ error: 'Already Check Out' });
+        console.error('Error:', "No Record Found");
+        // return res.status(500).json({ error: 'No Record Found' });
 
       }
+
     } catch (error) {
       console.error('Error:', error.message);
-      res.status(500).json({ error: 'Internal Server Error' });
+      // res.status(500).json({ error: 'Internal Server Error' });
     }
   },
+
 
 
 };
