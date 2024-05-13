@@ -133,30 +133,27 @@ module.exports = {
 
             const { vendorId, userType, attandance_status } = req.body;
 
+
             if (!vendorId || !userType || !attandance_status) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
 
             // Find the employees by vendorId and userType
-            const emp = await employeeModel.find({ vendorId: vendorId, userType: userType }, '-otp')
+            let empList = '';
+            if(attandance_status == 'all'){
+             empList = await employeeModel.find({ vendorId: vendorId, userType: userType }, '-otp')
                 .sort({ _id: -1 });
+            }else{
 
-            const userIdsfilterby = emp.map(employee => employee._id);
+             empList = await employeeModel.find({ vendorId: vendorId, userType: userType, attendanceStatus: attandance_status }, '-otp')
 
-            // Find attendance for users with those IDs for the provided date and status 'IN'
-            const attendanceList = await attendanceModel.find({ userId: { $in: userIdsfilterby }, status: attandance_status, createdAt: { $gte: providedDate, $lt: moment(providedDate).add(1, 'day').format('YYYY-MM-DD') } });
+             }
 
-            const userIdsfilterbyatt = attendanceList.map(employee => employee.userId);
-
-            // Find the employees who have attendance marked as "In" for the provided date
-            const empMain = await employeeModel.find({ _id: { $in: userIdsfilterbyatt } }, '-otp')
-                .sort({ _id: -1 });
-
-            if (!empMain || empMain.length === 0) {
-                return res.status(404).json({ message: 'No employees found with attendance marked as today for the provided date' });
+            if (!empList || empList.length === 0) {
+                return res.status(404).json({ message: 'No employees found' });
             }
 
-            res.status(200).json(empMain);
+            res.status(200).json(empList);
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal Server Error' });
@@ -759,7 +756,23 @@ module.exports = {
             let mergedDetails = [];
 
             if (!trackData || trackData.length === 0) {
-                return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
+               
+                // return res.status(404).json({ message: "No Data Found", track: [], employee: employee });
+                
+                const response = {
+                    employee: employee,
+                    track: [],
+                    origin: {
+                        distance: 0,
+                        duration: 0,
+                        taskCount: 0
+                    }
+                };
+    
+    
+                return res.status(404).json({ message: "No Data Found", response });
+            
+           
             }
 
             for (let i = 0; i < trackData.length; i++) {
