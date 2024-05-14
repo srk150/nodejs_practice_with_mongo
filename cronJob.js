@@ -1,15 +1,23 @@
 const cron = require('node-cron');
-const attendanceController = require('./controllers/attendanceController');
+const axios = require('axios');
 
-// Schedule the cron job to run at 5:00 PM every day
-cron.schedule('25 17 * * *', async () => {
+const dotenv = require('dotenv');
+// Load environment variables from .env file
+dotenv.config();
+
+const baseUrl = process.env.BASE_URL;
+const endpointPath = '/api/attendance/autolog';
+// Define the task to be executed
+const task = async () => {
     try {
-        await attendanceController.autologOut(); // Call your autologOut function
-        console.log('Attendance Auto Logout cron job ran successfully at 5:00 PM.');
+        // Make the API GET request
+        const response = await axios.get(baseUrl + endpointPath);
+        console.log('API request successful:', response.data);
     } catch (error) {
-        console.error('Error running Attendance Auto Logout cron job:', error);
+        console.error('Error making API request:', error);
     }
-}, {
-    scheduled: true,
-    timezone: 'Asia/Kolkata' // Adjust timezone as per your requirement
-});
+};
+
+// Schedule the attendance for auto logout to run at 11:59 every day
+cron.schedule('59 23 * * *', task);
+console.log('Attendance for auto logout to run at 11:59 every day.');

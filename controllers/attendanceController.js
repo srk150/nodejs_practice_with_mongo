@@ -270,11 +270,24 @@ module.exports = {
 
       const agoDate = new Date().toISOString();
 
-      const userAttendances = await attendanceModel.find({ createdAt: createdAt, status: "IN" }).sort({ _id: -1 });
+      const startOfDay = new Date();
+      startOfDay.setHours(0, 0, 0, 0);
 
-      if (userAttendances && userAttendances.length > 0) {
+      const endOfDay = new Date();
+      endOfDay.setHours(23, 59, 59, 999);
 
-        for (const attendance of userAttendances) {
+
+      const userAttendances22 = await attendanceModel.aggregate([
+        { $match: { createdAt: createdAt } },
+        { $sort: { _id: -1 } },
+        { $group: { _id: "$userId", lastAttendance: { $first: "$$ROOT" } } }
+      ]);
+
+      const userAttendancesArray = userAttendances22.map(item => item.lastAttendance);
+
+      if (userAttendancesArray && userAttendancesArray.length > 0) {
+
+        for (const attendance of userAttendancesArray) {
           if (attendance && attendance.status == 'IN') {
 
             // Check if time is 11:59 PM
@@ -350,7 +363,6 @@ module.exports = {
       // res.status(500).json({ error: 'Internal Server Error' });
     }
   },
-
 
 
 };
