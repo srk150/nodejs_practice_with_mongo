@@ -180,7 +180,7 @@ module.exports = {
 
             const { vendorName, vendorEmail, vendorMobile, vendorCompany, vandorLat, vandorLong } = req.body;
 
-            if (!vendorName || !vendorEmail || !vendorMobile || !vendorCompany || !vandorLat || !vandorLong) {
+            if (!vendorName || !vendorMobile || !vendorCompany || !vandorLat || !vandorLong) {
                 return res.status(400).json({ error: 'One or more fields are empty' });
             }
 
@@ -664,7 +664,7 @@ module.exports = {
 
             if (!trackData || trackData.length === 0) {
                 // return res.status(404).json({ message: "No Data Found", track: [], vendor: vendor });
-           
+
                 const response = {
                     vendor: vendor,
                     track: [],
@@ -675,8 +675,8 @@ module.exports = {
                     }
                 };
 
-            return res.status(404).json({ message: "No Data Found", response });
-           
+                return res.status(404).json({ message: "No Data Found", response });
+
             }
 
             for (let i = 0; i < trackData.length; i++) {
