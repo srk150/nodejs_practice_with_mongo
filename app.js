@@ -5,6 +5,11 @@ const port = process.env.PORT || 3000;
 const bodyParser = require('body-parser');
 
 const dotenv = require('dotenv');
+
+const cron = require('node-cron');
+const axios = require('axios');
+
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -68,6 +73,29 @@ app.use(`${baseRoute}/vendor`, vendorRoute);
 app.use(`${baseRoute}/reimbrushment`, reimbrushRoute);
 app.use(`${baseRoute}/asset`, assetsRoute);
 app.use(`${baseRoute}/license`, licenseRoute);
+
+
+
+//Cron job for auto logout Attendence
+const taskForAutologout = async () => {
+  try {
+    // Make the API GET request
+    const baseUrl23 = process.env.BASE_URL;
+    const endpointPath11 = '/api/attendance/autolog';
+
+    const response32 = await axios.get(baseUrl23 + endpointPath11);
+    console.log('Attendance for auto logout to run at 11:59:', response32.data);
+
+  } catch (error) {
+    console.error('Error making API request:', error);
+  }
+};
+
+// cron.schedule('* * * * *', taskForAutologout); //every minutes
+cron.schedule('59 23 * * *', taskForAutologout); // at 11.59 pm
+//end cronjob function for attendence
+
+
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
