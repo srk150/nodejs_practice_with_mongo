@@ -19,7 +19,16 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI);
+
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Increase server selection timeout to 30 seconds
+  socketTimeoutMS: 45000,          // Increase socket timeout to 45 seconds
+  connectTimeoutMS: 30000,         // Increase initial connection timeout to 30 seconds
+};
+
+mongoose.connect(process.env.MONGODB_URI, options);
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
@@ -35,6 +44,8 @@ mongoose.connection.on('disconnected', () => {
 
 process.on('SIGINT', async () => {
   await mongoose.connection.close();
+  console.log('Disconnected from MongoDB due to application termination');
+
   process.exit(0);
 });
 
@@ -62,7 +73,7 @@ app.get(baseRoute, (req, res) => {
 
 });
 
-  
+
 // Use the user routes
 app.use(`${baseRoute}/user`, userRoutes);
 app.use(`${baseRoute}/attendance`, attendenceRoute);
