@@ -19,35 +19,37 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 const mongoose = require('mongoose');
-
-const options = {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 30000, // Increase server selection timeout to 30 seconds
-  socketTimeoutMS: 45000,          // Increase socket timeout to 45 seconds
-  connectTimeoutMS: 30000,         // Increase initial connection timeout to 30 seconds
-};
+  useUnifiedTopology: true
+});
 
-mongoose.connect(process.env.MONGODB_URI, options);
-
-mongoose.connection.on('connected', () => {
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => {
   console.log('Connected to MongoDB');
 });
 
-mongoose.connection.on('error', (err) => {
-  console.error(`MongoDB connection error: ${err}`);
-});
 
-mongoose.connection.on('disconnected', () => {
-  console.log('Disconnected from MongoDB');
-});
+// const mongoose = require('mongoose');
+// mongoose.connect(process.env.MONGODB_URI);
 
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  console.log('Disconnected from MongoDB due to application termination');
+// mongoose.connection.on('connected', () => {
+//   console.log('Connected to MongoDB');
+// });
 
-  process.exit(0);
-});
+// mongoose.connection.on('error', (err) => {
+//   console.error(`MongoDB connection error: ${err}`);
+// });
+
+// mongoose.connection.on('disconnected', () => {
+//   console.log('Disconnected from MongoDB');
+// });
+
+// process.on('SIGINT', async () => {
+//   await mongoose.connection.close();
+//   process.exit(0);
+// });
 
 
 //route files path
