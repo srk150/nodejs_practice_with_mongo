@@ -19,37 +19,24 @@ app.use(bodyParser.json());
 
 // MongoDB Connection
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+mongoose.connect(process.env.MONGODB_URI);
 
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', () => {
+mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
 });
 
+mongoose.connection.on('error', (err) => {
+  console.error(`MongoDB connection error: ${err}`);
+});
 
-// const mongoose = require('mongoose');
-// mongoose.connect(process.env.MONGODB_URI);
+mongoose.connection.on('disconnected', () => {
+  console.log('Disconnected from MongoDB');
+});
 
-// mongoose.connection.on('connected', () => {
-//   console.log('Connected to MongoDB');
-// });
-
-// mongoose.connection.on('error', (err) => {
-//   console.error(`MongoDB connection error: ${err}`);
-// });
-
-// mongoose.connection.on('disconnected', () => {
-//   console.log('Disconnected from MongoDB');
-// });
-
-// process.on('SIGINT', async () => {
-//   await mongoose.connection.close();
-//   process.exit(0);
-// });
+process.on('SIGINT', async () => {
+  await mongoose.connection.close();
+  process.exit(0);
+});
 
 
 //route files path
