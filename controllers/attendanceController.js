@@ -261,108 +261,108 @@ module.exports = {
 
 
   //autolog
-  autologOut: async (req, res) => {
-    try {
+  // autologOut: async (req, res) => {
+  //   try {
 
-      const currentDateIST = moment.tz(new Date(), 'Asia/Kolkata');
-      const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
-      const createdAt = currentDateIST.format('YYYY-MM-DD');
+  //     const currentDateIST = moment.tz(new Date(), 'Asia/Kolkata');
+  //     const currentDate = currentDateIST.format('YYYY-MM-DD hh:mm A');
+  //     const createdAt = currentDateIST.format('YYYY-MM-DD');
 
-      const agoDate = new Date().toISOString();
+  //     const agoDate = new Date().toISOString();
 
-      const startOfDay = new Date();
-      startOfDay.setHours(0, 0, 0, 0);
+  //     const startOfDay = new Date();
+  //     startOfDay.setHours(0, 0, 0, 0);
 
-      const endOfDay = new Date();
-      endOfDay.setHours(23, 59, 59, 999);
+  //     const endOfDay = new Date();
+  //     endOfDay.setHours(23, 59, 59, 999);
 
 
-      const userAttendances22 = await attendanceModel.aggregate([
-        { $match: { createdAt: createdAt } },
-        { $sort: { _id: -1 } },
-        { $group: { _id: "$userId", lastAttendance: { $first: "$$ROOT" } } }
-      ]);
+  //     const userAttendances22 = await attendanceModel.aggregate([
+  //       { $match: { createdAt: createdAt } },
+  //       { $sort: { _id: -1 } },
+  //       { $group: { _id: "$userId", lastAttendance: { $first: "$$ROOT" } } }
+  //     ]);
 
-      const userAttendancesArray = userAttendances22.map(item => item.lastAttendance);
+  //     const userAttendancesArray = userAttendances22.map(item => item.lastAttendance);
 
-      if (userAttendancesArray && userAttendancesArray.length > 0) {
+  //     if (userAttendancesArray && userAttendancesArray.length > 0) {
 
-        for (const attendance of userAttendancesArray) {
-          if (attendance && attendance.status == 'IN') {
+  //       for (const attendance of userAttendancesArray) {
+  //         if (attendance && attendance.status == 'IN') {
 
-            // Check if time is 11:59 PM
-            const currentHour = currentDateIST.hours(); // Get the current hour (0-23)
-            const currentMinute = currentDateIST.minutes(); // Get the current minute (0-59)
+  //           // Check if time is 11:59 PM
+  //           const currentHour = currentDateIST.hours(); // Get the current hour (0-23)
+  //           const currentMinute = currentDateIST.minutes(); // Get the current minute (0-59)
 
-            // if (currentHour === 23 && currentMinute === 59) {
-            const status = "OUT";
+  //           // if (currentHour === 23 && currentMinute === 59) {
+  //           const status = "OUT";
 
-            if (attendance.type === 'vendor') {
-              // Update vendor attendance
-              await vendorModel.updateOne({ _id: attendance.userId }, {
-                $set: {
-                  agoDate: agoDate,
-                  attendanceStatus: status,
-                  vandorLat: 0,
-                  vandorLong: 0
-                }
-              });
-            } else {
-              // Update employee attendance
-              await employeeModel.updateOne({ _id: attendance.userId }, {
-                $set: {
-                  agoDate: agoDate,
-                  attendanceStatus: status,
-                  latitude: 0,
-                  longitude: 0
-                }
-              });
-            }
+  //           if (attendance.type === 'vendor') {
+  //             // Update vendor attendance
+  //             await vendorModel.updateOne({ _id: attendance.userId }, {
+  //               $set: {
+  //                 agoDate: agoDate,
+  //                 attendanceStatus: status,
+  //                 vandorLat: 0,
+  //                 vandorLong: 0
+  //               }
+  //             });
+  //           } else {
+  //             // Update employee attendance
+  //             await employeeModel.updateOne({ _id: attendance.userId }, {
+  //               $set: {
+  //                 agoDate: agoDate,
+  //                 attendanceStatus: status,
+  //                 latitude: 0,
+  //                 longitude: 0
+  //               }
+  //             });
+  //           }
 
-            // Create new attendance record
-            const newAttendance = new attendanceModel({
-              userId: attendance.userId,
-              type: attendance.type,
-              attnedanceDate: currentDate,
-              attnedanceLat: 0,
-              attnedanceLong: 0,
-              attnedanceAddress: "0",
-              status,
-              createdAt: createdAt,
-            });
+  //           // Create new attendance record
+  //           const newAttendance = new attendanceModel({
+  //             userId: attendance.userId,
+  //             type: attendance.type,
+  //             attnedanceDate: currentDate,
+  //             attnedanceLat: 0,
+  //             attnedanceLong: 0,
+  //             attnedanceAddress: "0",
+  //             status,
+  //             createdAt: createdAt,
+  //           });
 
-            const savedAttendance = await newAttendance.save();
-            const insertedId = savedAttendance._id;
+  //           const savedAttendance = await newAttendance.save();
+  //           const insertedId = savedAttendance._id;
 
-            // Track log insertion
-            const newTrack = new trackModel({
-              userId: attendance.userId,
-              userType: attendance.type,
-              status,
-              taskId: 0,
-              lat: 0,
-              long: 0,
-              attendceId: insertedId,
-              createdAt: currentDate,
-            });
-            await newTrack.save();
+  //           // Track log insertion
+  //           const newTrack = new trackModel({
+  //             userId: attendance.userId,
+  //             userType: attendance.type,
+  //             status,
+  //             taskId: 0,
+  //             lat: 0,
+  //             long: 0,
+  //             attendceId: insertedId,
+  //             createdAt: currentDate,
+  //           });
+  //           await newTrack.save();
 
-          }
-        }
-        // Send response after inserting new entries
-        res.status(200).json({ message: 'Attendance Auto Logout Successfully' });
+  //         }
+  //       }
+  //       // Send response after inserting new entries
+  //       res.status(200).json({ message: 'Attendance Auto Logout Successfully' });
 
-      } else {
-        console.error('Error:', "No Record Found");
-        // return res.status(500).json({ error: 'No Record Found' });
+  //     } else {
+  //       console.error('Error:', "No Record Found");
+  //       // return res.status(500).json({ error: 'No Record Found' });
 
-      }
+  //     }
 
-    } catch (error) {
-      console.error('Error:', error.message);
-      // res.status(500).json({ error: 'Internal Server Error' });
-    }
-  },
+  //   } catch (error) {
+  //     console.error('Error:', error.message);
+  //     // res.status(500).json({ error: 'Internal Server Error' });
+  //   }
+  // },
 
 
 };
