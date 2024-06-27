@@ -2,8 +2,8 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 
+const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const dotenv = require('dotenv');
 
 const cron = require('node-cron');
@@ -18,8 +18,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // MongoDB Connection
-const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGODB_URI);
+// mongoose.connect(process.env.MONGODB_URI);
+
+
+
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000,  // Increase this value if necessary
+  socketTimeoutMS: 45000,
+});
+
 
 mongoose.connection.on('connected', () => {
   console.log('Connected to MongoDB');
