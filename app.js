@@ -22,29 +22,29 @@ app.use(bodyParser.json());
 
 
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 10000,  // Increase this value if necessary
-});
+// mongoose.connect(process.env.MONGODB_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+//   serverSelectionTimeoutMS: 10000,  // Increase this value if necessary
+// });
 
 
-mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB');
-});
+// mongoose.connection.on('connected', () => {
+//   console.log('Connected to MongoDB');
+// });
 
-mongoose.connection.on('error', (err) => {
-  console.error(`MongoDB connection error: ${err}`);
-});
+// mongoose.connection.on('error', (err) => {
+//   console.error(`MongoDB connection error: ${err}`);
+// });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('Disconnected from MongoDB');
-});
+// mongoose.connection.on('disconnected', () => {
+//   console.log('Disconnected from MongoDB');
+// });
 
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  process.exit(0);
-});
+// process.on('SIGINT', async () => {
+//   await mongoose.connection.close();
+//   process.exit(0);
+// });
 
 
 //route files path
